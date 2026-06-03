@@ -11,7 +11,7 @@ from anthropic import Anthropic
 
 def test_github():
     """Test GitHub connection"""
-    print("🔗 Testing GitHub connection...")
+    print("\n🔗 Testing GitHub connection...")
     try:
         token = os.getenv("GITHUB_TOKEN")
         if not token:
