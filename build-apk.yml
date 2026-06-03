@@ -1,0 +1,94 @@
+name: Build Aetherion APK
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # handmatig starten via GitHub UI
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Code ophalen ────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Node.js instellen ───────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── 3. Java instellen (vereist voor Gradle) ────────────────────
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # ── 4. Android SDK instellen ───────────────────────────────────
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # ── 5. Dependencies installeren ────────────────────────────────
+      - name: Install Node dependencies
+        run: npm ci
+
+      # ── 6. Capacitor Android platform toevoegen ────────────────────
+      - name: Add Android platform
+        run: npx cap add android
+
+      # ── 7. Synchroniseren ──────────────────────────────────────────
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      # ── 8. Gradle permissions ──────────────────────────────────────
+      - name: Make Gradlew executable
+        run: chmod +x android/gradlew
+
+      # ── 9. APK bouwen ──────────────────────────────────────────────
+      - name: Build Debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      # ── 10. APK uploaden als artifact ──────────────────────────────
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aetherion-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      # ── 11. Release aanmaken bij push naar main ────────────────────
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: "Aetherion v${{ github.run_number }}"
+          body: |
+            ## Aetherion/Vectoris Android App
+
+            ### Installeren
+            1. Download `aetherion-debug.apk` hieronder
+            2. Stuur naar je Android telefoon (mail/WhatsApp)
+            3. Instellingen → Beveiliging → Onbekende bronnen: AAN
+            4. Tik op de APK → Installeren
+
+            ### Wat is er nieuw
+            - Matrix UI met volledige Orchestrator interface
+            - 6 agents: Research, Code, Planner, Executor, Critic, Memory
+            - Moreel kompas met 9 ethische regels
+            - MCP app connectors
+            - Prioriteitswachtrij (CRITICAL > HIGH > NORMAL > LOW)
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
