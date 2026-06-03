@@ -59,7 +59,7 @@ def test_claude_direct():
         }
         
         data = {
-            "model": "claude-3-5-sonnet-20241022",
+            "model": "claude-sonnet-4-5",
             "max_tokens": 150,
             "messages": [
                 {
@@ -122,7 +122,7 @@ def test_communication():
 - Issues: {repo_data['open_issues_count']}"""
         
         data = {
-            "model": "claude-3-5-sonnet-20241022",
+            "model": "claude-sonnet-4-5",
             "max_tokens": 100,
             "messages": [{"role": "user", "content": prompt}]
         }
