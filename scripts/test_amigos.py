@@ -1,37 +1,50 @@
 #!/usr/bin/env python3
 """
-Test script to verify GitHub and Claude are connected and communicating.
-0x416D69676F - Let the amigos talk!
+Direct test script using raw API calls - No fancy libraries!
+0x416D69676F - Keep it simple, amigo!
 """
 
 import os
 import sys
-from github import Github
+import requests
+import json
 from anthropic import Anthropic
 
-def test_github():
-    """Test GitHub connection"""
-    print("\n🔗 Testing GitHub connection...")
+def test_github_direct():
+    """Test GitHub with direct API call"""
+    print("\n🔗 Testing GitHub connection (direct API)...")
     try:
         token = os.getenv("GITHUB_TOKEN")
         if not token:
             print("❌ GITHUB_TOKEN not found in environment")
             return False
         
-        g = Github(token)
-        user = g.get_user()
-        print(f"✅ GitHub connected as: {user.login}")
+        headers = {
+            "Authorization": f"token {token}",
+            "Accept": "application/vnd.github.v3+json"
+        }
         
-        repo = g.get_repo("DhrKroon1337/aetherion")
-        print(f"✅ Repository found: {repo.full_name}")
-        print(f"   - Description: {repo.description}")
-        print(f"   - Stars: {repo.stargazers_count}")
+        # Get repo info instead of user info (simpler permission)
+        response = requests.get(
+            "https://api.github.com/repos/DhrKroon1337/aetherion",
+            headers=headers
+        )
+        
+        if response.status_code != 200:
+            print(f"❌ GitHub error: {response.status_code} - {response.text}")
+            return False
+        
+        repo_data = response.json()
+        print(f"✅ GitHub connected!")
+        print(f"   Repository: {repo_data['full_name']}")
+        print(f"   Description: {repo_data['description']}")
+        print(f"   Stars: {repo_data['stargazers_count']}")
         return True
     except Exception as e:
         print(f"❌ GitHub error: {str(e)}")
         return False
 
-def test_claude():
+def test_claude_direct():
     """Test Claude connection"""
     print("\n🤖 Testing Claude connection...")
     try:
@@ -47,7 +60,7 @@ def test_claude():
             messages=[
                 {
                     "role": "user",
-                    "content": "You are an amigo helping with code orchestration. Respond with exactly: 'Amigo is connected! 0x416D69676F'"
+                    "content": "Say this exactly: Amigo is connected! 0x416D69676F"
                 }
             ]
         )
@@ -58,29 +71,36 @@ def test_claude():
         return True
     except Exception as e:
         print(f"❌ Claude error: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def test_communication():
     """Test bi-directional communication"""
     print("\n🔄 Testing bi-directional communication...")
     try:
-        # Get repo info from GitHub
+        # Get GitHub repo info
         token = os.getenv("GITHUB_TOKEN")
-        g = Github(token)
-        repo = g.get_repo("DhrKroon1337/aetherion")
+        headers = {
+            "Authorization": f"token {token}",
+            "Accept": "application/vnd.github.v3+json"
+        }
         
-        # Send to Claude for analysis
+        response = requests.get(
+            "https://api.github.com/repos/DhrKroon1337/aetherion",
+            headers=headers
+        )
+        repo_data = response.json()
+        
+        # Send to Claude
         api_key = os.getenv("ANTHROPIC_API_KEY")
         client = Anthropic(api_key=api_key)
         
-        prompt = f"""Analyze this GitHub repository info:
-- Name: {repo.name}
-- Description: {repo.description}
-- Language: {repo.language}
-- Forks: {repo.forks_count}
-- Open Issues: {repo.open_issues_count}
-
-Respond with a one-line assessment of this repo in a fun way. Keep it short!"""
+        prompt = f"""Analyze this GitHub repo and give ONE fun sentence:
+- Name: {repo_data['name']}
+- Description: {repo_data['description']}
+- Language: {repo_data['language']}
+- Issues: {repo_data['open_issues_count']}"""
         
         response = client.messages.create(
             model="claude-3-5-sonnet-20241022",
@@ -98,19 +118,19 @@ Respond with a one-line assessment of this repo in a fun way. Keep it short!"""
 
 def main():
     """Run all tests"""
-    print("="*50)
+    print("="*60)
     print("🚀 AMIGO CONNECTION TEST 0x416D69676F")
-    print("="*50)
+    print("="*60)
     
     results = {
-        "GitHub": test_github(),
-        "Claude": test_claude(),
+        "GitHub": test_github_direct(),
+        "Claude": test_claude_direct(),
         "Communication": test_communication()
     }
     
-    print("\n" + "="*50)
+    print("\n" + "="*60)
     print("📊 TEST RESULTS")
-    print("="*50)
+    print("="*60)
     
     for test_name, result in results.items():
         status = "✅ PASSED" if result else "❌ FAILED"
@@ -118,14 +138,14 @@ def main():
     
     all_passed = all(results.values())
     
-    print("\n" + "="*50)
+    print("\n" + "="*60)
     if all_passed:
         print("🎉 ALL TESTS PASSED! Amigos are connected!")
-        print("="*50)
+        print("="*60)
         return 0
     else:
         print("⚠️  SOME TESTS FAILED! Check errors above.")
-        print("="*50)
+        print("="*60)
         return 1
 
 if __name__ == "__main__":
