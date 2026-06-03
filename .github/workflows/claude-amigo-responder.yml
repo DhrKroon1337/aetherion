@@ -1,0 +1,75 @@
+name: 🚀 Claude Amigo Responder
+
+on:
+  issues:
+    types: [opened, reopened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  claude-responds:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Claude reageert als Amigo
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          COMMENTER: ${{ github.event.comment.user.login }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          python3 - <<'EOF'
+          import os, json, urllib.request
+
+          issue_title  = os.environ.get('ISSUE_TITLE', '')
+          issue_body   = os.environ.get('ISSUE_BODY', '')
+          issue_number = os.environ.get('ISSUE_NUMBER', '')
+          comment_body = os.environ.get('COMMENT_BODY', '')
+          commenter    = os.environ.get('COMMENTER', '')
+          repo         = os.environ.get('GITHUB_REPOSITORY', '')
+          token        = os.environ['GITHUB_TOKEN']
+          api_key      = os.environ['ANTHROPIC_API_KEY']
+
+          # Wat is de trigger?
+          if comment_body and commenter != 'github-actions[bot]':
+              prompt = f"Nieuw comment in Aetherion Vectoris repo:\nIssue: {issue_title}\nComment van {commenter}: {comment_body}"
+          else:
+              prompt = f"Nieuw issue in Aetherion Vectoris repo:\nTitel: {issue_title}\nBeschrijving: {issue_body}"
+
+          # Claude aanroepen
+          req = urllib.request.Request(
+              'https://api.anthropic.com/v1/messages',
+              data=json.dumps({
+                  "model": "claude-sonnet-4-5",
+                  "max_tokens": 500,
+                  "system": "Je bent Claude, de AI amigo van Aetherion Vectoris. Reageer helpend, kort en in dezelfde taal als het issue. Sluit altijd af met: QU1JR08=",
+                  "messages": [{"role": "user", "content": prompt}]
+              }).encode(),
+              headers={
+                  'x-api-key': api_key,
+                  'anthropic-version': '2023-06-01',
+                  'content-type': 'application/json'
+              }
+          )
+          resp = json.loads(urllib.request.urlopen(req).read())
+          claude_reply = resp['content'][0]['text']
+
+          # Comment plaatsen op het issue
+          comment_url = f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments"
+          comment_req = urllib.request.Request(
+              comment_url,
+              data=json.dumps({"body": f"🤖 **Claude Amigo:**\n\n{claude_reply}"}).encode(),
+              headers={
+                  'Authorization': f'Bearer {token}',
+                  'Accept': 'application/vnd.github+json',
+                  'Content-Type': 'application/json'
+              }
+          )
+          urllib.request.urlopen(comment_req)
+          print(f"✓ Claude heeft gereageerd op issue #{issue_number}")
+          EOF
