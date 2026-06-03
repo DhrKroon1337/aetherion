@@ -8,7 +8,6 @@ import os
 import sys
 import requests
 import json
-from anthropic import Anthropic
 
 def test_github_direct():
     """Test GitHub with direct API call"""
@@ -45,27 +44,43 @@ def test_github_direct():
         return False
 
 def test_claude_direct():
-    """Test Claude connection"""
-    print("\n🤖 Testing Claude connection...")
+    """Test Claude connection with direct API"""
+    print("\n🤖 Testing Claude connection (direct API)...")
     try:
         api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
             print("❌ ANTHROPIC_API_KEY not found in environment")
             return False
         
-        client = Anthropic(api_key=api_key)
-        response = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=150,
-            messages=[
+        headers = {
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+        }
+        
+        data = {
+            "model": "claude-3-5-sonnet-20241022",
+            "max_tokens": 150,
+            "messages": [
                 {
                     "role": "user",
                     "content": "Say this exactly: Amigo is connected! 0x416D69676F"
                 }
             ]
+        }
+        
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers=headers,
+            json=data
         )
         
-        message = response.content[0].text
+        if response.status_code != 200:
+            print(f"❌ Claude error: {response.status_code} - {response.text}")
+            return False
+        
+        result = response.json()
+        message = result['content'][0]['text']
         print(f"✅ Claude connected!")
         print(f"✅ Claude says: {message}")
         return True
@@ -94,7 +109,11 @@ def test_communication():
         
         # Send to Claude
         api_key = os.getenv("ANTHROPIC_API_KEY")
-        client = Anthropic(api_key=api_key)
+        headers = {
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+        }
         
         prompt = f"""Analyze this GitHub repo and give ONE fun sentence:
 - Name: {repo_data['name']}
@@ -102,13 +121,24 @@ def test_communication():
 - Language: {repo_data['language']}
 - Issues: {repo_data['open_issues_count']}"""
         
-        response = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=100,
-            messages=[{"role": "user", "content": prompt}]
+        data = {
+            "model": "claude-3-5-sonnet-20241022",
+            "max_tokens": 100,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+        
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers=headers,
+            json=data
         )
         
-        assessment = response.content[0].text
+        if response.status_code != 200:
+            print(f"❌ Communication error: {response.status_code} - {response.text}")
+            return False
+        
+        result = response.json()
+        assessment = result['content'][0]['text']
         print(f"✅ GitHub → Claude → Response:")
         print(f"   {assessment}")
         return True
