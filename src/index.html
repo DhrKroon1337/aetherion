@@ -1136,6 +1136,41 @@ function upd(){
   document.getElementById('sr').textContent=S.retried;
 }
 
+// ── OTA Auto-update ────────────────────────────────────────
+const APP_VERSION = 'v__BUILD_NUMBER__';
+
+async function checkUpdate(){
+  try{
+    const r = await fetch('https://api.github.com/repos/DhrKroon1337/aetherion/releases/latest', {
+      headers: {'Accept':'application/vnd.github+json'}
+    });
+    if(!r.ok) return;
+    const data = await r.json();
+    const latest = data.tag_name;
+    const apkAsset = data.assets && data.assets.find(a => a.name.endsWith('.apk'));
+    if(!apkAsset) return;
+
+    if(latest !== APP_VERSION){
+      log(`🆕 Nieuwe versie beschikbaar: ${latest} (jij hebt ${APP_VERSION})`, 'inf');
+      const t = document.getElementById('terminal');
+      const card = document.createElement('div');
+      card.className = 'rcard';
+      card.setAttribute('data-a', 'UPDATE');
+      card.style.borderLeftColor = 'var(--amb)';
+      card.innerHTML = `<div><span class="rv" style="color:var(--amb)">🆕 UPDATE BESCHIKBAAR — ${latest}\n\nKlik om te downloaden en installeren:</span><br><br>
+        <button onclick="window.open('${apkAsset.browser_download_url}')" style="background:transparent;border:1px solid var(--amb);color:var(--amb);font-family:var(--mono);font-size:11px;padding:8px 16px;cursor:pointer;border-radius:2px;letter-spacing:1px;width:100%">
+          ⬇ DOWNLOAD ${latest} (${(apkAsset.size/1024/1024).toFixed(1)} MB)
+        </button></div>`;
+      t.appendChild(card);
+      toast(`🆕 Update beschikbaar: ${latest}`);
+    } else {
+      log(`✓ App is up-to-date (${APP_VERSION})`, 'dm');
+    }
+  }catch(e){
+    log('OTA check overgeslagen: ' + e.message.slice(0,40), 'dm');
+  }
+}
+
 // ── Init ───────────────────────────────────────────────────
 // ── App opstarten ─────────────────────────────────────────
 // Alles initialiseren bij het laden van de pagina
@@ -1159,6 +1194,9 @@ const boot=[
   [1700,'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','ok'],
 ];
 boot.forEach(([t,m,c])=>setTimeout(()=>log(typeof m==='function'?m():m,c),t));
+
+// OTA check 3 seconden na boot
+setTimeout(checkUpdate, 3000);
 </script>
 </body>
 </html>
