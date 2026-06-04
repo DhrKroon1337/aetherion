@@ -13,11 +13,11 @@ def test_github_direct():
     """Test GitHub with direct API call"""
     print("\n🔗 Testing GitHub connection (direct API)...")
     try:
-        token = os.getenv("GITHUB_TOKEN")
+        token = (os.getenv("GITHUB_TOKEN") or "").strip()
         if not token:
             print("❌ GITHUB_TOKEN not found in environment")
             return False
-        
+
         headers = {
             "Authorization": f"token {token}",
             "Accept": "application/vnd.github.v3+json"
@@ -47,11 +47,11 @@ def test_claude_direct():
     """Test Claude connection with direct API"""
     print("\n🤖 Testing Claude connection (direct API)...")
     try:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
         if not api_key:
             print("❌ ANTHROPIC_API_KEY not found in environment")
             return False
-        
+
         headers = {
             "x-api-key": api_key,
             "anthropic-version": "2023-06-01",
@@ -95,20 +95,20 @@ def test_communication():
     print("\n🔄 Testing bi-directional communication...")
     try:
         # Get GitHub repo info
-        token = os.getenv("GITHUB_TOKEN")
+        token = (os.getenv("GITHUB_TOKEN") or "").strip()
         headers = {
             "Authorization": f"token {token}",
             "Accept": "application/vnd.github.v3+json"
         }
-        
+
         response = requests.get(
             "https://api.github.com/repos/DhrKroon1337/aetherion",
             headers=headers
         )
         repo_data = response.json()
-        
+
         # Send to Claude
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
         headers = {
             "x-api-key": api_key,
             "anthropic-version": "2023-06-01",
