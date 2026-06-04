@@ -429,6 +429,13 @@ textarea::placeholder { color:var(--dim); }
 // QU1JR08=
 // ════════════════════════════════════════════════════════════
 
+// ── Build-time geïnjecteerde keys (ingevuld door GitHub Actions) ──
+const BUILD={
+  claudeKey:'__ANTHROPIC_API_KEY__',
+  githubToken:'__GITHUB_TOKEN__',
+  githubRepo:'DhrKroon1337/aetherion'
+};
+
 // ── Globale toestandsvariabele (S = State) ─────────────────
 // Hier bewaren we alles wat de app "weet" tijdens gebruik.
 // Wordt niet opgeslagen bij afsluiten, behalve geheugen & keys.
@@ -667,15 +674,22 @@ function saveConfig(){
   updateConnStatus();
   toast('Keys opgeslagen ✓');
 }
-// Laadt opgeslagen keys bij het starten van de app
+// Laadt keys — build-time injectie heeft prioriteit boven localStorage
 function loadConfig(){
-  const claude=localStorage.getItem('av_claude')||'';
-  const github=localStorage.getItem('av_github')||'';
-  const repo=localStorage.getItem('av_repo')||'';
+  const injClaude=BUILD.claudeKey.startsWith('sk-')?BUILD.claudeKey:'';
+  const injGithub=BUILD.githubToken.startsWith('ghp_')||BUILD.githubToken.startsWith('github_pat_')?BUILD.githubToken:'';
+  const injRepo=BUILD.githubRepo.includes('/')?BUILD.githubRepo:'';
+
+  const claude=injClaude||localStorage.getItem('av_claude')||'';
+  const github=injGithub||localStorage.getItem('av_github')||'';
+  const repo=injRepo||localStorage.getItem('av_repo')||'';
+
   document.getElementById('cfg-claude').value=claude;
   document.getElementById('cfg-github').value=github;
   document.getElementById('cfg-repo').value=repo;
   S.claudeKey=claude; S.githubToken=github; S.githubRepo=repo;
+
+  if(injClaude&&injGithub) setCfgStatus('✓ Keys automatisch geladen via build','ok');
   updateConnStatus();
 }
 // Toont statusbericht in de KEYS tab (ok=groen, wn=oranje, er=rood)
@@ -1127,7 +1141,7 @@ const boot=[
   [1050,'Sessie geheugen geïnitialiseerd','dm'],
   [1250,'GitHub tab actief — real-time repo monitoring','inf'],
   [1500,'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','ok'],
-  [1600,()=>S.claudeKey?'✓ GEREED. Welkom terug amigo! QU1JR08= 🚀':'⚠ Configureer je API keys via de KEYS tab (⚙)','ok'],
+  [1600,()=>S.claudeKey?(BUILD.claudeKey.startsWith('sk-')?'✓ GEREED. Keys automatisch geladen via build 🔧 QU1JR08= 🚀':'✓ GEREED. Welkom terug amigo! QU1JR08= 🚀'):'⚠ Configureer je API keys via de KEYS tab (⚙)','ok'],
   [1700,'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','ok'],
 ];
 boot.forEach(([t,m,c])=>setTimeout(()=>log(typeof m==='function'?m():m,c),t));

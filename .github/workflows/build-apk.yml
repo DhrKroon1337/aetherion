@@ -43,6 +43,21 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      # ── 5b. API keys inbakken in index.html ───────────────────────
+      - name: Inject API keys from GitHub Secrets
+        run: |
+          node -e "
+          const fs = require('fs');
+          let html = fs.readFileSync('src/index.html', 'utf8');
+          html = html.replace('__ANTHROPIC_API_KEY__', process.env.ANTHROPIC_API_KEY || '');
+          html = html.replace('__GITHUB_TOKEN__', process.env.GITHUB_TOKEN || '');
+          fs.writeFileSync('src/index.html', html);
+          console.log('Keys succesvol geïnjecteerd in index.html');
+          "
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # ── 6. Capacitor Android platform toevoegen ────────────────────
       - name: Add Android platform
         run: npx cap add android
