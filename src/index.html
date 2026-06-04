@@ -944,6 +944,18 @@ const Speech = {
   ttsEnabled: true,
   waveInterval: null,
 
+  async requestPermission(){
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      stream.getTracks().forEach(t=>t.stop());
+      log('🎤 Microfoon toegang verleend ✓','ok');
+      return true;
+    }catch(e){
+      log('🎤 Microfoon geblokkeerd: '+e.message,'wn');
+      return false;
+    }
+  },
+
   init(){
     if(!this.supported){ document.getElementById('mic-btn').style.opacity='.3'; document.getElementById('mic-status').textContent='Spraak niet ondersteund'; return; }
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1046,10 +1058,12 @@ const Speech = {
   }
 };
 
-function toggleMic(){
+async function toggleMic(){
   if(!Speech.supported){ toast('Spraak niet ondersteund in deze browser'); return; }
   if(Speech.synthesis&&Speech.synthesis.speaking){ Speech.synthesis.cancel(); return; }
   if(Speech.listening){ Speech.recognition.stop(); return; }
+  const ok = await Speech.requestPermission();
+  if(!ok){ toast('⚠ Microfoon toegang geweigerd — check app instellingen'); return; }
   Speech.recognition.start();
 }
 
