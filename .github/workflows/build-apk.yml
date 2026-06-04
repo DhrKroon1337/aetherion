@@ -11,6 +11,10 @@ jobs:
   build-apk:
     name: Build Android APK
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      actions: read
 
     steps:
       # ── 1. Code ophalen ────────────────────────────────────────────
