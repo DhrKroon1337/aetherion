@@ -63,8 +63,7 @@ jobs:
       # ── 6. Capacitor Android platform toevoegen ────────────────────
       - name: Add Android platform
         run: |
-          # Verwijder alleen de manifest zodat cap add android slaagt
-          rm -f android/app/src/main/AndroidManifest.xml
+          rm -rf android
           npx cap add android
 
       # ── 6b. Onze AndroidManifest met RECORD_AUDIO terugzetten ──────
