@@ -436,6 +436,9 @@ const BUILD={
   githubRepo:'DhrKroon1337/aetherion'
 };
 
+// ── Sleep helper (ontbrak, veroorzaakte crash bij retries) ──
+const sl = ms => new Promise(r => setTimeout(r, ms));
+
 // ── Globale toestandsvariabele (S = State) ─────────────────
 // Hier bewaren we alles wat de app "weet" tijdens gebruik.
 // Wordt niet opgeslagen bij afsluiten, behalve geheugen & keys.
@@ -676,8 +679,8 @@ function saveConfig(){
 }
 // Laadt keys — build-time injectie heeft prioriteit boven localStorage
 function loadConfig(){
-  const injClaude=BUILD.claudeKey.startsWith('sk-')?BUILD.claudeKey:'';
-  const injGithub=BUILD.githubToken.startsWith('ghp_')||BUILD.githubToken.startsWith('github_pat_')?BUILD.githubToken:'';
+  const injClaude=!BUILD.claudeKey.includes('__')?BUILD.claudeKey:'';
+  const injGithub=!BUILD.githubToken.includes('__')?BUILD.githubToken:'';
   const injRepo=BUILD.githubRepo.includes('/')?BUILD.githubRepo:'';
 
   const claude=injClaude||localStorage.getItem('av_claude')||'';
@@ -944,18 +947,6 @@ const Speech = {
   ttsEnabled: true,
   waveInterval: null,
 
-  async requestPermission(){
-    try{
-      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-      stream.getTracks().forEach(t=>t.stop());
-      log('🎤 Microfoon toegang verleend ✓','ok');
-      return true;
-    }catch(e){
-      log('🎤 Microfoon geblokkeerd: '+e.message,'wn');
-      return false;
-    }
-  },
-
   init(){
     if(!this.supported){ document.getElementById('mic-btn').style.opacity='.3'; document.getElementById('mic-status').textContent='Spraak niet ondersteund'; return; }
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1058,13 +1049,12 @@ const Speech = {
   }
 };
 
-async function toggleMic(){
+function toggleMic(){
   if(!Speech.supported){ toast('Spraak niet ondersteund in deze browser'); return; }
   if(Speech.synthesis&&Speech.synthesis.speaking){ Speech.synthesis.cancel(); return; }
   if(Speech.listening){ Speech.recognition.stop(); return; }
-  const ok = await Speech.requestPermission();
-  if(!ok){ toast('⚠ Microfoon toegang geweigerd — check app instellingen'); return; }
-  Speech.recognition.start();
+  try{ Speech.recognition.start(); }
+  catch(e){ toast('⚠ Microfoon: '+e.message); log('🎤 Start fout: '+e.message,'wn'); }
 }
 
 function toggleTTS(){
@@ -1137,7 +1127,7 @@ function upd(){
 }
 
 // ── OTA Auto-update ────────────────────────────────────────
-const APP_VERSION = 'v__BUILD_NUMBER__';
+const APP_VERSION = '__BUILD_NUMBER__';
 
 async function checkUpdate(){
   try{
