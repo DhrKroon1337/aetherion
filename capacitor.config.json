@@ -2,7 +2,6 @@
   "appId": "com.dhrkroon1337.aetherion",
   "appName": "Aetherion Vectoris",
   "webDir": "src",
-  "bundledWebRuntime": false,
   "server": {
     "androidScheme": "https",
     "cleartext": true
