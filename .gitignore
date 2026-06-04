@@ -1,0 +1,11 @@
+node_modules/
+
+# Android gegenereerde bestanden — alleen manifest bijhouden
+android/*
+!android/app/
+android/app/*
+!android/app/src/
+android/app/src/*
+!android/app/src/main/
+android/app/src/main/*
+!android/app/src/main/AndroidManifest.xml

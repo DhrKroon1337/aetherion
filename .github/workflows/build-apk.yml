@@ -62,17 +62,21 @@ jobs:
 
       # ── 6. Capacitor Android platform toevoegen ────────────────────
       - name: Add Android platform
-        run: npx cap add android
-
-      # ── 6b. RECORD_AUDIO permission toevoegen aan AndroidManifest ──
-      - name: Patch AndroidManifest - RECORD_AUDIO permission
         run: |
+          # Verwijder alleen de manifest zodat cap add android slaagt
+          rm -f android/app/src/main/AndroidManifest.xml
+          npx cap add android
+
+      # ── 6b. Onze AndroidManifest met RECORD_AUDIO terugzetten ──────
+      - name: Restore AndroidManifest with RECORD_AUDIO permission
+        run: |
+          cat android/app/src/main/AndroidManifest.xml
           node -e "
           const fs = require('fs');
           const path = 'android/app/src/main/AndroidManifest.xml';
           let xml = fs.readFileSync(path, 'utf8');
           if (xml.includes('RECORD_AUDIO')) {
-            console.log('RECORD_AUDIO al aanwezig, overslaan.');
+            console.log('RECORD_AUDIO al aanwezig ✓');
           } else {
             xml = xml.replace(
               '</manifest>',
@@ -82,8 +86,8 @@ jobs:
             );
             fs.writeFileSync(path, xml);
             console.log('RECORD_AUDIO + MODIFY_AUDIO_SETTINGS toegevoegd ✓');
-            console.log(fs.readFileSync(path, 'utf8'));
           }
+          console.log(fs.readFileSync(path, 'utf8'));
           "
 
       # ── 7. Synchroniseren ──────────────────────────────────────────
