@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000a02">
-<title>Aetherion</title>
+<title>Aetherion Vectoris</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;900&family=VT323&display=swap');
 
@@ -32,393 +33,271 @@
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body { height:100%; overflow:hidden; background:var(--bg); color:var(--g); font-family:var(--mono); touch-action:manipulation; }
 
-/* ── Matrix canvas ── */
 #mc { position:fixed; inset:0; pointer-events:none; opacity:.055; z-index:0; }
+body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:1; background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px); }
+body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:1; background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.6) 100%); }
 
-/* ── CRT scanlines ── */
-body::after {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:1;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);
-}
+#app { position:relative; z-index:2; height:100%; display:flex; flex-direction:column; padding-top:var(--safe-t); padding-bottom:var(--safe-b); }
 
-/* ── Vignette ── */
-body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:1;
-  background:radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.6) 100%);
-}
-
-/* ── App shell ── */
-#app {
-  position:relative; z-index:2; height:100%;
-  display:flex; flex-direction:column;
-  padding-top:var(--safe-t); padding-bottom:var(--safe-b);
-}
-
-/* ── Header ── */
-header {
-  flex-shrink:0; padding:14px 16px 10px;
-  border-bottom:1px solid var(--bdr);
-  display:flex; align-items:center; justify-content:space-between;
-  background:linear-gradient(180deg, rgba(0,20,5,.9) 0%, transparent 100%);
-}
+header { flex-shrink:0; padding:14px 16px 10px; border-bottom:1px solid var(--bdr); display:flex; align-items:center; justify-content:space-between; background:linear-gradient(180deg, rgba(0,20,5,.9) 0%, transparent 100%); }
 
 .logo-wrap { position:relative; }
-.logo {
-  font-family:var(--orb); font-size:18px; font-weight:900;
-  letter-spacing:4px; color:var(--g);
-  text-shadow:0 0 10px var(--g), 0 0 30px var(--gdim), 0 0 60px rgba(0,255,65,.2);
-  animation:hglow 4s ease-in-out infinite;
-  position:relative;
-}
-/* Glitch effect */
-.logo::before, .logo::after {
-  content:attr(data-text);
-  position:absolute; top:0; left:0; width:100%;
-  font-family:var(--orb); font-size:18px; font-weight:900; letter-spacing:4px;
-}
-.logo::before {
-  color:#ff0040; clip-path:polygon(0 0,100% 0,100% 35%,0 35%);
-  animation:glitch1 6s infinite; transform:translateX(-2px);
-}
-.logo::after {
-  color:#00d4ff; clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%);
-  animation:glitch2 6s infinite; transform:translateX(2px);
-}
-@keyframes glitch1 {
-  0%,94%,100%{opacity:0;transform:translateX(-2px)}
-  95%,97%{opacity:.7;transform:translateX(-3px)}
-  96%,98%{opacity:.7;transform:translateX(2px)}
-}
-@keyframes glitch2 {
-  0%,94%,100%{opacity:0;transform:translateX(2px)}
-  95%,97%{opacity:.6;transform:translateX(3px)}
-  96%,98%{opacity:.6;transform:translateX(-2px)}
-}
-@keyframes hglow {
-  0%,100%{text-shadow:0 0 10px var(--g),0 0 30px var(--gdim)}
-  50%{text-shadow:0 0 20px var(--g),0 0 50px var(--gdim),0 0 80px rgba(0,255,65,.3)}
-}
+.logo { font-family:var(--orb); font-size:18px; font-weight:900; letter-spacing:4px; color:var(--g); text-shadow:0 0 10px var(--g), 0 0 30px var(--gdim), 0 0 60px rgba(0,255,65,.2); animation:hglow 4s ease-in-out infinite; position:relative; }
+.logo::before, .logo::after { content:attr(data-text); position:absolute; top:0; left:0; width:100%; font-family:var(--orb); font-size:18px; font-weight:900; letter-spacing:4px; }
+.logo::before { color:#ff0040; clip-path:polygon(0 0,100% 0,100% 35%,0 35%); animation:glitch1 6s infinite; transform:translateX(-2px); }
+.logo::after { color:#00d4ff; clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%); animation:glitch2 6s infinite; transform:translateX(2px); }
+@keyframes glitch1 { 0%,94%,100%{opacity:0;transform:translateX(-2px)} 95%,97%{opacity:.7;transform:translateX(-3px)} 96%,98%{opacity:.7;transform:translateX(2px)} }
+@keyframes glitch2 { 0%,94%,100%{opacity:0;transform:translateX(2px)} 95%,97%{opacity:.6;transform:translateX(3px)} 96%,98%{opacity:.6;transform:translateX(-2px)} }
+@keyframes hglow { 0%,100%{text-shadow:0 0 10px var(--g),0 0 30px var(--gdim)} 50%{text-shadow:0 0 20px var(--g),0 0 50px var(--gdim),0 0 80px rgba(0,255,65,.3)} }
 
-.logo-sub { font-family:var(--vt); font-size:14px; color:var(--dim); letter-spacing:3px; margin-top:-2px; }
+.sub { font-size:9px; color:var(--dim); letter-spacing:3px; margin-top:2px; font-family:var(--mono); }
+.hstats { display:flex; gap:12px; align-items:center; }
+.hstat { text-align:center; }
+.hstat-v { font-family:var(--orb); font-size:14px; font-weight:600; color:var(--g); }
+.hstat-l { font-size:8px; color:var(--dim); letter-spacing:1px; }
+.hok { color:var(--g); }
+.hblk { color:var(--r); }
 
-.hstats { display:flex; gap:16px; }
-.hs { text-align:right; }
-.hs-val { font-family:var(--orb); font-size:16px; display:block; }
-.hs-val.ok  { color:var(--g); text-shadow:0 0 8px var(--g); }
-.hs-val.bad { color:var(--r); text-shadow:0 0 8px var(--r); }
-.hs-lbl { font-size:8px; color:var(--dim); letter-spacing:2px; }
+/* Connection indicator */
+.conn-dot { width:8px; height:8px; border-radius:50%; background:var(--dim); display:inline-block; margin-left:6px; transition:background .3s; }
+.conn-dot.on { background:var(--g); box-shadow:0 0 6px var(--g); animation:pulse 2s infinite; }
+.conn-dot.warn { background:var(--amb); box-shadow:0 0 6px var(--amb); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
 
-/* ── Tabs ── */
-.tabs {
-  flex-shrink:0; display:flex;
-  border-bottom:1px solid var(--bdr);
-  background:var(--bg2);
-}
-.tab {
-  flex:1; padding:10px 4px 8px; text-align:center;
-  font-family:var(--orb); font-size:8px; letter-spacing:2px;
-  color:var(--dim); cursor:pointer; transition:all .2s;
-  border-bottom:2px solid transparent; position:relative;
-}
-.tab.active { color:var(--g); border-bottom-color:var(--g); background:var(--gglow); }
-.tab-icon { font-size:18px; display:block; margin-bottom:2px; line-height:1; }
-.tab-badge {
-  position:absolute; top:6px; right:6px;
-  background:var(--amb); color:#000; font-size:8px;
-  font-family:var(--orb); padding:1px 4px; border-radius:6px;
-  display:none;
-}
+.tabs { flex-shrink:0; display:flex; border-bottom:1px solid var(--bdr); background:var(--bg2); }
+.tab { flex:1; padding:10px 4px 8px; text-align:center; font-size:9px; letter-spacing:1px; color:var(--dim); cursor:pointer; border-right:1px solid var(--bdr); transition:all .2s; position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.tab:last-child { border-right:none; }
+.tab.active { color:var(--g); background:var(--bg3); border-bottom:2px solid var(--g); }
+.tab-icon { font-size:14px; }
+.tab-badge { position:absolute; top:4px; right:6px; background:var(--amb); color:#000; font-size:8px; font-weight:bold; padding:1px 4px; border-radius:10px; display:none; }
 .tab-badge.on { display:block; }
 
-/* ── Screens ── */
-.screen { flex:1; overflow-y:auto; overflow-x:hidden; display:none; -webkit-overflow-scrolling:touch; }
-.screen.active { display:flex; flex-direction:column; }
-.screen::-webkit-scrollbar { display:none; }
+.screens { flex:1; overflow:hidden; position:relative; }
+.screen { position:absolute; inset:0; overflow-y:auto; padding:10px; display:none; }
+.screen.active { display:block; }
+.screen::-webkit-scrollbar { width:3px; }
+.screen::-webkit-scrollbar-track { background:var(--bg); }
+.screen::-webkit-scrollbar-thumb { background:var(--bdr); }
 
-/* ── CMD Screen ── */
-#screen-cmd { padding:0; gap:0; }
+.cmd-panel { background:var(--bg2); border:1px solid var(--bdr); border-radius:4px; padding:10px; margin-bottom:8px; }
+.plabel { font-size:10px; letter-spacing:2px; color:var(--gdim); display:flex; align-items:center; gap:6px; padding-bottom:8px; }
+.dot { width:6px; height:6px; border-radius:50%; background:var(--g); box-shadow:0 0 4px var(--g); flex-shrink:0; }
+.dot.b { background:var(--b); box-shadow:0 0 4px var(--b); }
+.dot.a { background:var(--amb); box-shadow:0 0 4px var(--amb); }
+.dot.r { background:var(--r); box-shadow:0 0 4px var(--r); }
 
-.cmd-panel {
-  margin:10px 12px 0; border:1px solid var(--bdr);
-  background:var(--bg2); position:relative; overflow:hidden;
-  flex-shrink:0;
-}
-.cmd-panel::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg,transparent,var(--gdim),transparent);
-}
+textarea { width:100%; height:90px; background:var(--bg3); border:1px solid var(--bdr); color:var(--g); font-family:var(--mono); font-size:12px; padding:8px; resize:none; outline:none; border-radius:2px; line-height:1.5; }
+textarea:focus { border-color:var(--gdim); box-shadow:0 0 8px var(--gglow); }
+textarea::placeholder { color:var(--dim); }
 
-.plabel {
-  font-family:var(--orb); font-size:9px; letter-spacing:3px; color:var(--dim);
-  padding:8px 12px 6px; border-bottom:1px solid var(--bdr);
-  display:flex; align-items:center; gap:6px;
-}
-.plabel .dot {
-  width:5px; height:5px; border-radius:50%;
-  background:var(--g); box-shadow:0 0 5px var(--g);
-  animation:blk 1.8s step-end infinite;
-}
-.plabel .dot.b { background:var(--b); box-shadow:0 0 5px var(--b); }
-.plabel .dot.a { background:var(--amb); box-shadow:0 0 5px var(--amb); animation-delay:.6s; }
-@keyframes blk { 50%{opacity:0} }
+.chip-zone { display:flex; flex-wrap:wrap; gap:6px; padding-top:2px; }
+.chip { padding:4px 10px; border:1px solid var(--bdr); font-size:10px; letter-spacing:1px; cursor:pointer; border-radius:2px; color:var(--dim); transition:all .15s; }
+.chip.active { border-color:var(--g); color:var(--g); background:var(--gglow); box-shadow:0 0 8px var(--gglow); }
+.prio-zone { display:flex; gap:6px; padding-top:2px; }
+.pchip { flex:1; padding:5px 4px; border:1px solid var(--bdr); font-size:9px; letter-spacing:1px; cursor:pointer; border-radius:2px; color:var(--dim); text-align:center; transition:all .15s; }
+.pchip.active { border-color:var(--amb); color:var(--amb); background:rgba(255,170,0,.08); }
 
-textarea#inp {
-  width:100%; background:transparent;
-  border:none; border-bottom:1px solid var(--bdr);
-  color:var(--g); font-family:var(--mono); font-size:13px;
-  padding:10px 12px; resize:none; height:72px; outline:none;
-  line-height:1.6; transition:background .2s;
-}
-textarea#inp:focus { background:rgba(0,255,65,.03); }
-textarea#inp::placeholder { color:var(--dim); font-size:12px; }
+.btn-zone { display:flex; gap:6px; padding-top:8px; }
+.xbtn { flex:1; padding:9px 4px; background:transparent; border:1px solid var(--g); color:var(--g); font-family:var(--mono); font-size:11px; letter-spacing:1px; cursor:pointer; border-radius:2px; transition:all .15s; }
+.xbtn:active { background:var(--gglow); }
+.xbtn.off { opacity:.4; pointer-events:none; }
+.xbtn.q { border-color:var(--amb); color:var(--amb); }
+.xbtn.clr { border-color:var(--dim); color:var(--dim); }
+.xbtn.danger { border-color:var(--r); color:var(--r); }
 
-/* Chips */
-.chip-zone { padding:8px 10px; display:flex; flex-wrap:wrap; gap:5px; }
-.chip {
-  border:1px solid var(--bdr); color:var(--dim); background:transparent;
-  font-family:var(--mono); font-size:9px; padding:5px 10px; cursor:pointer;
-  letter-spacing:1px; transition:all .15s; min-height:28px;
-  display:flex; align-items:center;
-}
-.chip.active { border-color:var(--b); color:var(--b); background:rgba(0,212,255,.07); box-shadow:0 0 6px rgba(0,212,255,.15); }
-.chip:active  { transform:scale(.95); }
+/* Streaming indicator */
+.streaming-bar { height:2px; background:linear-gradient(90deg, transparent, var(--g), transparent); background-size:200% 100%; animation:stream 1.5s linear infinite; display:none; margin-bottom:4px; border-radius:1px; }
+.streaming-bar.on { display:block; }
+@keyframes stream { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-/* Prio */
-.prio-zone { padding:0 10px 8px; display:flex; gap:5px; }
-.pchip {
-  flex:1; border:1px solid var(--bdr); color:var(--dim); background:transparent;
-  font-family:var(--orb); font-size:8px; padding:7px 4px; cursor:pointer;
-  letter-spacing:1px; transition:all .15s; text-align:center; min-height:30px;
-}
-.pchip.active            { border-color:var(--g); color:var(--g); background:var(--gglow); }
-.pchip[data-p=CRITICAL].active { border-color:var(--r); color:var(--r); background:rgba(255,37,37,.07); }
-.pchip[data-p=HIGH].active     { border-color:var(--amb); color:var(--amb); background:rgba(255,170,0,.07); }
-
-/* Buttons */
-.btn-zone { padding:0 10px 10px; display:flex; gap:8px; }
-.xbtn {
-  flex:1; background:transparent; border:1px solid var(--g); color:var(--g);
-  font-family:var(--orb); font-size:10px; letter-spacing:2px;
-  padding:11px 6px; cursor:pointer; transition:all .15s; min-height:42px;
-  position:relative; overflow:hidden;
-}
-.xbtn::after {
-  content:''; position:absolute; inset:0; background:var(--g);
-  transform:scaleX(0); transform-origin:left; transition:transform .2s; z-index:-1;
-}
-.xbtn:active { color:var(--bg); }
-.xbtn:active::after { transform:scaleX(1); }
-.xbtn.q  { border-color:var(--b); color:var(--b); }
-.xbtn.q::after { background:var(--b); }
-.xbtn.clr { border-color:var(--dim); color:var(--dim); flex:0; padding:11px 14px; }
-.xbtn.clr::after { background:var(--dim); }
-.xbtn.off { opacity:.35; pointer-events:none; }
-
-/* Terminal */
-.term-panel {
-  margin:8px 12px 12px; border:1px solid var(--bdr);
-  background:var(--bg2); flex:1; position:relative; overflow:hidden;
-  min-height:200px;
-}
-.term-panel::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg,transparent,var(--gdim),transparent);
-}
-#terminal { padding:10px 12px; font-size:11px; line-height:1.8; overflow-y:auto; height:100%; }
+.term-panel { background:var(--bg2); border:1px solid var(--bdr); border-radius:4px; padding:10px; min-height:200px; }
+#terminal { font-size:11px; line-height:1.7; max-height:320px; overflow-y:auto; }
 #terminal::-webkit-scrollbar { width:2px; }
-#terminal::-webkit-scrollbar-thumb { background:var(--gdark); }
+#terminal::-webkit-scrollbar-thumb { background:var(--bdr); }
+.ll { display:flex; gap:8px; padding:1px 0; }
+.lt { color:var(--dim); flex-shrink:0; font-size:10px; }
+.lm { flex:1; word-break:break-word; }
+.lm.ok  { color:var(--g); }
+.lm.er  { color:var(--r); }
+.lm.wn  { color:var(--amb); }
+.lm.inf { color:var(--b); }
+.lm.dm  { color:var(--dim); }
+.lm.bl  { color:var(--r); font-weight:bold; }
+.rcard { background:var(--bg3); border:1px solid var(--bdr); border-left:3px solid var(--g); padding:8px 10px; margin:6px 0; border-radius:2px; font-size:11px; line-height:1.6; }
+.rcard::before { content:attr(data-a); font-size:9px; color:var(--gdim); letter-spacing:2px; display:block; margin-bottom:4px; }
+.rk { color:var(--gdim); font-size:10px; }
+.rv { color:var(--g); white-space:pre-wrap; }
 
-.ll { display:flex; gap:8px; margin-bottom:1px; opacity:0; animation:fi .25s forwards; }
-@keyframes fi { to{opacity:1} }
-.lt  { color:var(--dim); flex-shrink:0; font-size:9px; padding-top:2px; font-family:var(--mono); }
-.lm  { flex:1; word-break:break-word; }
-.ok  { color:var(--g); }
-.er  { color:var(--r); }
-.wn  { color:var(--amb); }
-.inf { color:var(--b); }
-.dm  { color:var(--dim); }
-.bl  { color:var(--r); font-weight:bold; }
+/* GitHub panel */
+.gh-panel { background:var(--bg2); border:1px solid var(--b); border-radius:4px; padding:10px; margin-bottom:8px; }
+.gh-item { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--bdr); font-size:11px; }
+.gh-item:last-child { border-bottom:none; }
+.gh-num { color:var(--b); font-size:10px; }
+.gh-title { color:var(--g); flex:1; padding:0 8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.gh-meta { color:var(--dim); font-size:9px; }
 
-.rcard {
-  border:1px solid var(--gdim); background:linear-gradient(135deg,rgba(0,20,5,.9),rgba(0,10,2,.9));
-  padding:10px; margin:5px 0 3px; font-size:11px; line-height:1.7;
-  position:relative; opacity:0; animation:fi .4s forwards;
-  box-shadow:inset 0 0 20px rgba(0,255,65,.03);
-}
-.rcard::before {
-  content:attr(data-a); position:absolute; top:-7px; left:10px;
-  background:var(--bg2); padding:0 6px; color:var(--gdim);
-  font-size:8px; letter-spacing:3px; font-family:var(--orb);
-}
-.rk { color:var(--dim); }
-.rv { color:var(--g); }
+/* Actions */
+.action-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+.acard { background:var(--bg2); border:1px solid var(--bdr); padding:12px 10px; cursor:pointer; border-radius:4px; text-align:left; transition:all .2s; }
+.acard:active { border-color:var(--g); background:var(--bg3); }
+.acard-top { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.aicon { font-size:18px; }
+.alabel { font-size:10px; letter-spacing:2px; color:var(--g); font-family:var(--orb); }
+.adesc { font-size:9px; color:var(--dim); line-height:1.4; }
 
-/* ── Actions screen ── */
-#screen-actions { padding:12px; gap:10px; }
+.queue-section { background:var(--bg2); border:1px solid var(--bdr); border-radius:4px; overflow:hidden; }
+.qitem { display:flex; align-items:center; gap:8px; padding:8px 10px; border-bottom:1px solid var(--bdr); font-size:10px; }
+.qprio { padding:2px 6px; border-radius:2px; font-size:8px; font-weight:bold; }
+.qprio.CRITICAL { background:rgba(255,37,37,.2); color:var(--r); border:1px solid var(--r); }
+.qprio.HIGH { background:rgba(255,170,0,.15); color:var(--amb); border:1px solid var(--amb); }
+.qprio.NORMAL { background:var(--gglow); color:var(--g); border:1px solid var(--bdr); }
+.qprio.LOW { background:transparent; color:var(--dim); border:1px solid var(--bdr); }
+.qtext { flex:1; color:var(--g); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.qagent { color:var(--b); font-size:9px; }
 
-.action-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.acard {
-  border:1px solid var(--bdr); background:var(--bg2);
-  padding:14px 12px; cursor:pointer; transition:all .15s;
-  position:relative; overflow:hidden; min-height:88px;
-  display:flex; flex-direction:column; gap:4px;
-}
-.acard::before {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(135deg,var(--gglow),transparent);
-  opacity:0; transition:opacity .2s;
-}
-.acard:active::before { opacity:1; }
-.acard:active { transform:scale(.97); border-color:var(--gdim); }
-.acard-top { display:flex; align-items:center; gap:8px; }
-.aicon { font-size:22px; }
-.alabel { font-family:var(--orb); font-size:9px; letter-spacing:2px; color:var(--g); }
-.adesc  { font-size:9px; color:var(--dim); line-height:1.4; }
-
-.queue-section { flex-shrink:0; }
-.qitem {
-  border:1px solid var(--bdr); background:var(--bg2); padding:8px 10px;
-  margin-bottom:6px; display:flex; align-items:center; gap:8px;
-  animation:slidein .3s forwards;
-}
-@keyframes slidein { from{transform:translateX(16px);opacity:0} to{transform:none;opacity:1} }
-.qprio { font-size:8px; letter-spacing:1px; border:1px solid currentColor; padding:2px 5px; flex-shrink:0; font-family:var(--orb); }
-.qprio.CRITICAL { color:var(--r); }
-.qprio.HIGH     { color:var(--amb); }
-.qprio.NORMAL   { color:var(--g); }
-.qprio.LOW      { color:var(--dim); }
-.qtext { flex:1; font-size:10px; color:var(--dim); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
-.qagent { font-size:9px; color:var(--b); font-family:var(--orb); }
-
-/* ── Connectors screen ── */
-#screen-connectors { padding:12px; gap:8px; }
-
-.ccard {
-  border:1px solid var(--bdr); background:var(--bg2);
-  padding:12px; display:flex; align-items:center; gap:12px;
-  cursor:pointer; transition:all .15s; min-height:58px; flex-shrink:0;
-}
-.ccard:active { background:var(--gglow); border-color:var(--g); transform:scale(.99); }
-.cdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; transition:all .3s; }
-.cdot.on  { background:var(--g); box-shadow:0 0 10px var(--g), 0 0 20px rgba(0,255,65,.3); }
+.ccard { display:flex; align-items:center; gap:10px; padding:12px; background:var(--bg2); border:1px solid var(--bdr); border-radius:4px; margin-bottom:6px; cursor:pointer; transition:all .2s; }
+.ccard:active { border-color:var(--g); }
+.cdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.cdot.on { background:var(--g); box-shadow:0 0 6px var(--g); }
 .cdot.off { background:var(--dim); }
-.cicon { font-size:22px; flex-shrink:0; }
+.cicon { font-size:18px; flex-shrink:0; }
 .cinfo { flex:1; }
-.cname   { font-size:12px; color:var(--g); }
-.cstatus { font-size:9px; color:var(--dim); letter-spacing:1px; margin-top:2px; }
-.ctoggle {
-  font-family:var(--orb); font-size:9px; letter-spacing:1px;
-  border:1px solid currentColor; padding:5px 10px; min-height:30px;
-  display:flex; align-items:center; transition:all .2s;
-}
-.ctoggle.on  { color:var(--g); box-shadow:0 0 6px rgba(0,255,65,.2); }
-.ctoggle.off { color:var(--dim); }
+.cname { font-size:11px; color:var(--g); margin-bottom:2px; }
+.cstatus { font-size:9px; color:var(--dim); }
+.ctoggle { font-size:10px; padding:3px 8px; border-radius:2px; }
+.ctoggle.on { color:var(--g); border:1px solid var(--g); }
+.ctoggle.off { color:var(--dim); border:1px solid var(--bdr); }
 
-/* ── Status screen ── */
-#screen-status { padding:12px; gap:10px; }
-
-.arow {
-  border:1px solid var(--bdr); background:var(--bg2);
-  padding:10px 12px; display:flex; align-items:center; gap:10px; flex-shrink:0;
-  transition:border-color .3s;
-}
-.arow.busy { border-color:var(--amb); }
-.ardot {
-  width:8px; height:8px; border-radius:50%; flex-shrink:0;
-  background:var(--g); box-shadow:0 0 8px var(--g); transition:all .3s;
-}
-.ardot.busy { background:var(--amb); box-shadow:0 0 8px var(--amb); animation:ablink .4s ease-in-out infinite alternate; }
-@keyframes ablink { to{opacity:.2} }
+.arow { display:flex; align-items:center; gap:10px; padding:10px; background:var(--bg2); border:1px solid var(--bdr); border-radius:4px; margin-bottom:6px; transition:all .3s; }
+.arow.busy { border-color:var(--amb); background:rgba(255,170,0,.05); }
+.ardot { width:8px; height:8px; border-radius:50%; background:var(--dim); flex-shrink:0; }
+.ardot.busy { background:var(--amb); box-shadow:0 0 8px var(--amb); animation:pulse 1s infinite; }
 .adata { flex:1; }
-.aname { font-size:11px; color:var(--g); letter-spacing:1px; font-family:var(--orb); }
-.adesc2{ font-size:9px; color:var(--dim); margin-top:2px; }
-.atasks{ font-family:var(--orb); font-size:15px; color:var(--gdim); }
+.aname { font-size:11px; color:var(--g); margin-bottom:2px; font-family:var(--orb); font-size:10px; }
+.adesc2 { font-size:9px; color:var(--dim); }
+.atasks { font-family:var(--orb); font-size:14px; color:var(--gdim); }
 
-.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0; }
-.scard {
-  border:1px solid var(--bdr); background:var(--bg2); padding:14px 10px; text-align:center;
-  position:relative; overflow:hidden;
-}
-.scard::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg,transparent,var(--gdim),transparent);
-}
-.sval { font-family:var(--orb); font-size:24px; display:block; }
-.sval.ok  { color:var(--g); text-shadow:0 0 10px rgba(0,255,65,.4); }
-.sval.bad { color:var(--r); text-shadow:0 0 10px rgba(255,37,37,.4); }
-.sval.amb { color:var(--amb); text-shadow:0 0 10px rgba(255,170,0,.4); }
-.slbl { font-size:9px; color:var(--dim); letter-spacing:2px; font-family:var(--orb); margin-top:4px; }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px; }
+.scard { background:var(--bg2); border:1px solid var(--bdr); padding:10px 6px; text-align:center; border-radius:4px; }
+.sval { font-family:var(--orb); font-size:20px; font-weight:600; display:block; }
+.sval.ok  { color:var(--g); }
+.sval.bad { color:var(--r); }
+.sval.amb { color:var(--amb); }
+.slbl { font-size:8px; color:var(--dim); letter-spacing:1px; margin-top:2px; }
 
-.kompas-box {
-  border:1px solid var(--bdr); background:var(--bg2); padding:12px; flex-shrink:0;
-}
-.krow { display:flex; justify-content:space-between; font-size:10px; padding:3px 0; border-bottom:1px solid rgba(0,50,16,.5); }
+.kompas-box { background:var(--bg2); border:1px solid var(--bdr); border-radius:4px; padding:12px; margin-bottom:8px; }
+.krow { display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--bdr); font-size:10px; }
 .krow:last-child { border-bottom:none; }
 .kkey { color:var(--dim); }
 .kval-ok  { color:var(--g); }
 .kval-bad { color:var(--r); }
 .kval-amb { color:var(--amb); }
+
+/* Visie sectie */
+.visie-box { background:linear-gradient(135deg, rgba(0,255,65,.05), rgba(0,212,255,.05)); border:1px solid var(--gdim); border-radius:4px; padding:14px; margin-bottom:8px; text-align:center; }
+.visie-title { font-family:var(--orb); font-size:11px; letter-spacing:3px; color:var(--g); margin-bottom:8px; }
+.visie-text { font-size:11px; color:var(--gdim); line-height:1.7; }
+.amigo-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:10px; }
+.amigo-card { background:var(--bg3); border:1px solid var(--bdr); padding:8px 4px; text-align:center; border-radius:4px; }
+.amigo-icon { font-size:20px; display:block; margin-bottom:4px; }
+.amigo-name { font-size:8px; color:var(--g); letter-spacing:1px; }
+.amigo-role { font-size:8px; color:var(--dim); margin-top:2px; }
+
+/* Geheugen */
+.mem-item { background:var(--bg2); border:1px solid var(--bdr); border-left:3px solid var(--b); padding:8px 10px; margin-bottom:6px; border-radius:2px; font-size:10px; }
+.mem-time { color:var(--dim); font-size:9px; }
+.mem-text { color:var(--g); margin-top:3px; }
+
+/* Config */
+.cfg-input { width:100%; background:var(--bg3); border:1px solid var(--bdr); color:var(--g); font-family:var(--mono); font-size:12px; padding:8px; outline:none; border-radius:2px; margin-bottom:4px; transition:border .2s; }
+.cfg-input:focus { border-color:var(--gdim); }
+.cfg-hint { font-size:10px; color:var(--dim); margin-bottom:8px; }
+
+/* Toast notifications */
+#toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--bg3); border:1px solid var(--g); color:var(--g); font-size:11px; padding:8px 16px; border-radius:4px; z-index:999; opacity:0; transition:opacity .3s; pointer-events:none; white-space:nowrap; }
+#toast.show { opacity:1; }
+
+/* Spraak */
+#mic-btn { width:48px; height:48px; border-radius:50%; border:2px solid var(--g); background:transparent; color:var(--g); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; position:relative; }
+#mic-btn.listening { border-color:var(--r); background:rgba(255,37,37,.1); animation:mic-pulse 1s infinite; }
+#mic-btn.listening::after { content:''; position:absolute; inset:-6px; border-radius:50%; border:2px solid var(--r); animation:mic-ring 1s infinite; }
+#mic-btn.speaking { border-color:var(--b); background:rgba(0,212,255,.1); }
+@keyframes mic-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,37,37,.4)} 50%{box-shadow:0 0 0 8px rgba(255,37,37,0)} }
+@keyframes mic-ring { 0%{transform:scale(1);opacity:.8} 100%{transform:scale(1.4);opacity:0} }
+.mic-zone { display:flex; align-items:center; gap:10px; padding:8px 0 4px; }
+.mic-status { flex:1; font-size:10px; color:var(--dim); }
+.mic-status.on { color:var(--r); }
+.mic-status.speaking { color:var(--b); }
+#voice-wave { height:24px; display:flex; align-items:center; gap:2px; }
+#voice-wave span { width:3px; background:var(--r); border-radius:2px; height:4px; transition:height .1s; }
 </style>
 </head>
 <body>
 <canvas id="mc"></canvas>
-<div id="app">
 
-<!-- HEADER -->
+<div id="app">
 <header>
   <div class="logo-wrap">
     <div class="logo" data-text="AETHERION">AETHERION</div>
-    <div class="logo-sub">VECTORIS CORE v2.0</div>
+    <div class="sub">VECTORIS v3.0 · <span id="conn-status">OFFLINE</span><span class="conn-dot" id="conn-dot"></span></div>
   </div>
   <div class="hstats">
-    <div class="hs"><span class="hs-val ok" id="hok">0</span><span class="hs-lbl">GESLAAGD</span></div>
-    <div class="hs"><span class="hs-val bad" id="hblk">0</span><span class="hs-lbl">GEBLOKKEERD</span></div>
+    <div class="hstat"><div class="hstat-v hok" id="hok">0</div><div class="hstat-l">OK</div></div>
+    <div class="hstat"><div class="hstat-v hblk" id="hblk">0</div><div class="hstat-l">BLK</div></div>
   </div>
 </header>
 
-<!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="go('cmd')"><span class="tab-icon">⌨</span>CMD</div>
-  <div class="tab" onclick="go('actions')" style="position:relative">
-    <span class="tab-icon">⚡</span>ACTIES
-    <span class="tab-badge" id="qbadge">0</span>
-  </div>
-  <div class="tab" onclick="go('connectors')"><span class="tab-icon">⊕</span>APPS</div>
+  <div class="tab" onclick="go('actions')" style="position:relative"><span class="tab-icon">⚡</span>ACTIES<span class="tab-badge" id="qbadge">0</span></div>
+  <div class="tab" onclick="go('github')"><span class="tab-icon">◈</span>GITHUB</div>
   <div class="tab" onclick="go('status')"><span class="tab-icon">◎</span>STATUS</div>
   <div class="tab" onclick="go('config')" id="tab-config"><span class="tab-icon">⚙</span>KEYS</div>
 </div>
+
+<div class="screens">
 
 <!-- CMD -->
 <div class="screen active" id="screen-cmd">
   <div class="cmd-panel">
     <div class="plabel"><span class="dot"></span>INSTRUCTIE AAN ORCHESTRATOR</div>
-    <textarea id="inp" placeholder="Bijv: Stuur een mail naar team@ over de sprint update, of: schrijf een async Python klasse..."></textarea>
-    <div class="plabel" style="border-top:1px solid var(--bdr)"><span class="dot b"></span>AGENT SELECTIE</div>
-    <div class="chip-zone" id="achips">
-      <div class="chip active" data-a="auto"           onclick="sa(this)">AUTO</div>
-      <div class="chip"        data-a="research_agent" onclick="sa(this)">RESEARCH</div>
-      <div class="chip"        data-a="code_agent"     onclick="sa(this)">CODE</div>
-      <div class="chip"        data-a="planner_agent"  onclick="sa(this)">PLANNER</div>
-      <div class="chip"        data-a="executor_agent" onclick="sa(this)">EXECUTOR</div>
-      <div class="chip"        data-a="critic_agent"   onclick="sa(this)">CRITIC</div>
-      <div class="chip"        data-a="memory_agent"   onclick="sa(this)">MEMORY</div>
+    <div class="streaming-bar" id="stream-bar"></div>
+    <textarea id="inp" placeholder="Typ je opdracht of druk op 🎤 om te spreken..."></textarea>
+    <div class="mic-zone">
+      <button id="mic-btn" onclick="toggleMic()" title="Spreek je opdracht in">🎤</button>
+      <div>
+        <div class="mic-status" id="mic-status">Tik 🎤 om te spreken</div>
+        <div id="voice-wave">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
     </div>
-    <div class="plabel" style="border-top:1px solid var(--bdr)"><span class="dot a"></span>PRIORITEIT</div>
+    <div class="plabel" style="border-top:1px solid var(--bdr);margin-top:6px"><span class="dot b"></span>AGENT</div>
+    <div class="chip-zone" id="achips">
+      <div class="chip active" data-a="auto" onclick="sa(this)">AUTO</div>
+      <div class="chip" data-a="research_agent" onclick="sa(this)">RESEARCH</div>
+      <div class="chip" data-a="code_agent" onclick="sa(this)">CODE</div>
+      <div class="chip" data-a="planner_agent" onclick="sa(this)">PLANNER</div>
+      <div class="chip" data-a="executor_agent" onclick="sa(this)">EXECUTOR</div>
+      <div class="chip" data-a="critic_agent" onclick="sa(this)">CRITIC</div>
+      <div class="chip" data-a="memory_agent" onclick="sa(this)">MEMORY</div>
+    </div>
+    <div class="plabel" style="border-top:1px solid var(--bdr);margin-top:6px"><span class="dot a"></span>PRIORITEIT</div>
     <div class="prio-zone">
       <div class="pchip" data-p="CRITICAL" onclick="sp(this)">CRIT</div>
-      <div class="pchip" data-p="HIGH"     onclick="sp(this)">HIGH</div>
+      <div class="pchip" data-p="HIGH" onclick="sp(this)">HIGH</div>
       <div class="pchip active" data-p="NORMAL" onclick="sp(this)">NORM</div>
-      <div class="pchip" data-p="LOW"      onclick="sp(this)">LOW</div>
+      <div class="pchip" data-p="LOW" onclick="sp(this)">LOW</div>
     </div>
     <div class="btn-zone">
       <button class="xbtn" id="rbtn" onclick="run(false)">▶ EXECUTE</button>
       <button class="xbtn q" onclick="run(true)">+ QUEUE</button>
       <button class="xbtn clr" onclick="clr()">CLR</button>
+      <button class="xbtn" onclick="toggleTTS()" title="Spraak aan/uit" style="flex:0;padding:9px 10px">🔊</button>
     </div>
   </div>
-
   <div class="term-panel">
-    <div class="plabel"><span class="dot"></span>TERMINAL OUTPUT</div>
+    <div class="plabel" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:6px"><span class="dot"></span>TERMINAL OUTPUT</span><button onclick="exportTerminal()" style="background:transparent;border:1px solid var(--bdr);color:var(--dim);font-size:9px;padding:2px 7px;cursor:pointer;border-radius:2px;letter-spacing:1px">↓ EXPORT</button></div>
     <div id="terminal"></div>
   </div>
 </div>
@@ -426,200 +305,484 @@ textarea#inp::placeholder { color:var(--dim); font-size:12px; }
 <!-- ACTIONS -->
 <div class="screen" id="screen-actions">
   <div class="action-grid" id="agrid"></div>
-
   <div class="queue-section">
-    <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2);margin:0">
+    <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2);margin:0;padding:10px">
       <span class="dot a"></span>WACHTRIJ (<span id="qcount">0</span>)
     </div>
-    <div id="qlist">
-      <div style="text-align:center;color:var(--dim);font-size:10px;padding:20px">LEEG</div>
-    </div>
+    <div id="qlist"><div style="text-align:center;color:var(--dim);font-size:10px;padding:20px">LEEG</div></div>
   </div>
 </div>
 
-<!-- CONNECTORS -->
-<div class="screen" id="screen-connectors">
-  <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2);margin-bottom:8px">
-    <span class="dot b"></span>APP CONNECTORS — KLIK OM TE KOPPELEN
+<!-- GITHUB -->
+<div class="screen" id="screen-github">
+  <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2);margin-bottom:8px;padding:10px">
+    <span class="dot b"></span>GITHUB — <span id="gh-reponame">NIET VERBONDEN</span>
   </div>
-  <div id="clist"></div>
+  <div class="btn-zone" style="margin-bottom:10px">
+    <button class="xbtn" onclick="loadGithub()" style="border-color:var(--b);color:var(--b)">↺ VERNIEUWEN</button>
+    <button class="xbtn q" onclick="quickIssue()">+ ISSUE</button>
+  </div>
+  <div class="gh-panel" id="gh-issues-panel">
+    <div class="plabel"><span class="dot b"></span>OPEN ISSUES</div>
+    <div id="gh-issues"><div style="color:var(--dim);font-size:10px">Laad issues via VERNIEUWEN...</div></div>
+  </div>
+  <div class="gh-panel" id="gh-commits-panel">
+    <div class="plabel"><span class="dot"></span>LAATSTE COMMITS</div>
+    <div id="gh-commits"><div style="color:var(--dim);font-size:10px">Laad commits via VERNIEUWEN...</div></div>
+  </div>
+  <div class="gh-panel">
+    <div class="plabel"><span class="dot a"></span>REPO INFO</div>
+    <div id="gh-info"><div style="color:var(--dim);font-size:10px">Verbind eerst via KEYS tab...</div></div>
+  </div>
 </div>
 
 <!-- STATUS -->
 <div class="screen" id="screen-status">
-  <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2)">
+  <!-- Visie -->
+  <div class="visie-box">
+    <div class="visie-title">🌍 MISSIE & VISIE</div>
+    <div class="visie-text">Het helpen van de mensheid,<br>natuur, dieren en alles wat leeft.</div>
+    <div class="amigo-grid">
+      <div class="amigo-card"><span class="amigo-icon">👤</span><div class="amigo-name">JIJ</div><div class="amigo-role">Visie & richting</div></div>
+      <div class="amigo-card"><span class="amigo-icon">🤖</span><div class="amigo-name">CLAUDE</div><div class="amigo-role">Denken & bouwen</div></div>
+      <div class="amigo-card"><span class="amigo-icon">◈</span><div class="amigo-name">GITHUB</div><div class="amigo-role">Geheugen & code</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:var(--dim);letter-spacing:2px">QU1JR08= 🚀</div>
+  </div>
+
+  <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2);padding:10px">
     <span class="dot"></span>AGENT STATUS
   </div>
-  <div id="alist" style="margin-bottom:10px"></div>
+  <div id="alist" style="margin-bottom:10px;margin-top:6px"></div>
 
-  <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2)">
+  <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2);padding:10px">
     <span class="dot a"></span>SYSTEEM STATS
   </div>
-  <div class="stats-grid" style="margin-bottom:10px">
-    <div class="scard"><span class="sval ok"  id="st">0</span><div class="slbl">TOTAAL</div></div>
-    <div class="scard"><span class="sval ok"  id="so">0</span><div class="slbl">GESLAAGD</div></div>
-    <div class="scard"><span class="sval bad" id="sb">0</span><div class="slbl">GEBLOKKEERD</div></div>
-    <div class="scard"><span class="sval amb" id="sr">0</span><div class="slbl">RETRIES</div></div>
+  <div class="stats-grid" style="margin:6px 0 10px">
+    <div class="scard"><span class="sval ok" id="st">0</span><div class="slbl">TOTAAL</div></div>
+    <div class="scard"><span class="sval ok" id="so">0</span><div class="slbl">OK</div></div>
+    <div class="scard"><span class="sval bad" id="sb">0</span><div class="slbl">BLOK</div></div>
+    <div class="scard"><span class="sval amb" id="sr">0</span><div class="slbl">RETRY</div></div>
   </div>
 
   <div class="kompas-box">
-    <div class="plabel" style="margin-bottom:8px;padding:0"><span class="dot"></span>MOREEL KOMPAS</div>
+    <div class="plabel" style="padding:0;margin-bottom:8px"><span class="dot r"></span>MOREEL KOMPAS</div>
     <div class="krow"><span class="kkey">STATUS</span><span class="kval-ok">ACTIEF</span></div>
     <div class="krow"><span class="kkey">ETHISCHE REGELS</span><span class="kval-ok">9 GELADEN</span></div>
     <div class="krow"><span class="kkey">SURVEILLANCE</span><span class="kval-bad">GEBLOKKEERD</span></div>
-    <div class="krow"><span class="kkey">MALWARE/RANSOMWARE</span><span class="kval-bad">GEBLOKKEERD</span></div>
+    <div class="krow"><span class="kkey">MALWARE</span><span class="kval-bad">GEBLOKKEERD</span></div>
     <div class="krow"><span class="kkey">MISLEIDING</span><span class="kval-bad">GEBLOKKEERD</span></div>
-    <div class="krow"><span class="kkey">PII ZONDER CONSENT</span><span class="kval-bad">GEBLOKKEERD</span></div>
+    <div class="krow"><span class="kkey">SCHADE AAN LEVEN</span><span class="kval-bad">GEBLOKKEERD</span></div>
     <div class="krow"><span class="kkey">PARALLELLE WORKERS</span><span class="kval-ok">4</span></div>
-    <div class="krow"><span class="kkey">MAX RETRIES</span><span class="kval-ok">2</span></div>
-    <div class="krow"><span class="kkey">GEHEUGEN</span><span class="kval-ok">SQLite FTS5</span></div>
-    <div class="krow"><span class="kkey">API BACKEND</span><span class="kval-amb">CONFIGUREER IP</span></div>
+    <div class="krow"><span class="kkey">MODEL</span><span class="kval-ok">claude-sonnet-4-5</span></div>
+    <div class="krow"><span class="kkey">VERSIE</span><span class="kval-ok">v3.0 — 3 AMIGOS</span></div>
+  </div>
+
+  <!-- Sessie geheugen -->
+  <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2);padding:10px;margin-bottom:6px">
+    <span class="dot b"></span>SESSIE GEHEUGEN (<span id="mem-count">0</span>)
+  </div>
+  <div id="mem-list"><div style="color:var(--dim);font-size:10px;padding:8px">Nog geen geheugen deze sessie...</div></div>
+  <div class="btn-zone" style="margin-top:6px">
+    <button class="xbtn danger" onclick="clearMemory()">🗑 GEHEUGEN WISSEN</button>
   </div>
 </div>
 
 <!-- CONFIG -->
 <div class="screen" id="screen-config">
-  <div class="plabel" style="border:1px solid var(--bdr);background:var(--bg2);margin-bottom:8px">
-    <span class="dot b"></span>API CONFIGURATIE — 3 AMIGOS
+  <div class="visie-box" style="margin-bottom:10px">
+    <div class="visie-title">⚙ 3 AMIGOS CONFIGURATIE</div>
+    <div class="visie-text" style="font-size:10px">Verbind Claude + GitHub voor echte samenwerking</div>
   </div>
   <div class="cmd-panel" style="margin-bottom:8px">
     <div class="plabel"><span class="dot"></span>CLAUDE API KEY</div>
-    <input id="cfg-claude" type="password" placeholder="sk-ant-..." style="width:100%;background:var(--bg3);border:1px solid var(--bdr);color:var(--g);font-family:var(--mono);font-size:12px;padding:8px;outline:none;border-radius:2px;margin-bottom:4px"/>
-    <div style="font-size:10px;color:var(--dim)">Haal op via console.anthropic.com</div>
+    <input id="cfg-claude" type="password" class="cfg-input" placeholder="sk-ant-..."/>
+    <div class="cfg-hint">→ console.anthropic.com → API Keys</div>
   </div>
   <div class="cmd-panel" style="margin-bottom:8px">
     <div class="plabel"><span class="dot b"></span>GITHUB TOKEN (PAT)</div>
-    <input id="cfg-github" type="password" placeholder="ghp_..." style="width:100%;background:var(--bg3);border:1px solid var(--bdr);color:var(--g);font-family:var(--mono);font-size:12px;padding:8px;outline:none;border-radius:2px;margin-bottom:4px"/>
-    <div style="font-size:10px;color:var(--dim)">Settings → Developer Settings → Personal Access Tokens → repo scope</div>
+    <input id="cfg-github" type="password" class="cfg-input" placeholder="ghp_..."/>
+    <div class="cfg-hint">→ GitHub Settings → Developer Settings → Tokens (classic) → repo scope</div>
   </div>
   <div class="cmd-panel" style="margin-bottom:8px">
     <div class="plabel"><span class="dot a"></span>GITHUB REPO</div>
-    <input id="cfg-repo" type="text" placeholder="gebruikersnaam/repo-naam" style="width:100%;background:var(--bg3);border:1px solid var(--bdr);color:var(--g);font-family:var(--mono);font-size:12px;padding:8px;outline:none;border-radius:2px;margin-bottom:4px"/>
-    <div style="font-size:10px;color:var(--dim)">Bijv: jouwgithub/aetherion-vectoris</div>
+    <input id="cfg-repo" type="text" class="cfg-input" placeholder="DhrKroon1337/aetherion"/>
+    <div class="cfg-hint">→ gebruikersnaam/repo-naam</div>
   </div>
   <div class="btn-zone">
     <button class="xbtn" onclick="saveConfig()">💾 OPSLAAN</button>
-    <button class="xbtn q" onclick="testConfig()">🔌 TEST VERBINDING</button>
+    <button class="xbtn q" onclick="testConfig()">🔌 TEST</button>
   </div>
-  <div id="cfg-status" style="margin-top:8px;font-size:11px;color:var(--dim);text-align:center"></div>
+  <div id="cfg-status" style="margin-top:10px;font-size:11px;text-align:center;color:var(--dim)"></div>
 </div>
 
+</div><!-- /screens -->
 </div><!-- /app -->
 
+<div id="toast"></div>
+
 <script>
-// ── State ─────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════
+// AETHERION VECTORIS v3.1 — Hoofd JavaScript
+// Drie amigos: Jij (mens) + Claude (AI) + GitHub (geheugen)
+// Missie: helpen van mensheid, natuur, dieren en alles wat leeft
+// QU1JR08=
+// ════════════════════════════════════════════════════════════
+
+// ── Globale toestandsvariabele (S = State) ─────────────────
+// Hier bewaren we alles wat de app "weet" tijdens gebruik.
+// Wordt niet opgeslagen bij afsluiten, behalve geheugen & keys.
 const S={
-  agent:'auto', prio:'NORMAL',
-  ok:0, blk:0, total:0, retried:0,
-  queue:[],
-  claudeKey:'', githubToken:'', githubRepo:'',
+  agent:'auto',    // Welke agent momenteel geselecteerd is
+  prio:'NORMAL',   // Prioriteit van de taak (CRITICAL/HIGH/NORMAL/LOW)
+  ok:0,            // Aantal geslaagde taken deze sessie
+  blk:0,           // Aantal geblokkeerde/mislukte taken
+  total:0,         // Totaal aantal uitgevoerde taken
+  retried:0,       // Aantal keer dat we opnieuw probeerden na een fout
+  queue:[],        // Wachtrij met taken die nog uitgevoerd moeten worden
+  memory:[],       // Langetermijngeheugen (ook opgeslagen in telefoon)
+  history:[],      // Gespreksgeschiedenis voor Claude (context per sessie)
+  claudeKey:'',    // Jouw Anthropic API sleutel (uit KEYS tab)
+  githubToken:'',  // Jouw GitHub toegangstoken (uit KEYS tab)
+  githubRepo:'',   // Jouw repo naam bijv. DhrKroon1337/aetherion
+  // De 6 beschikbare AI-agents — elk heeft een eigen specialiteit
   agents:[
-    {name:'research_agent', desc:'Analyseert & zoekt informatie',   tasks:0, busy:false},
-    {name:'code_agent',     desc:'Schrijft & debugt productiecode', tasks:0, busy:false},
-    {name:'planner_agent',  desc:'Maakt gedetailleerde plannen',    tasks:0, busy:false},
-    {name:'executor_agent', desc:'Voert acties uit via MCP',        tasks:0, busy:false},
-    {name:'critic_agent',   desc:'Kwaliteitsreviewer & ethiek',     tasks:0, busy:false},
-    {name:'memory_agent',   desc:'Persistente herinneringen',       tasks:0, busy:false},
+    {name:'research_agent', desc:'Analyseert & zoekt informatie',   tasks:0, busy:false}, // Onderzoeker
+    {name:'code_agent',     desc:'Schrijft & debugt productiecode', tasks:0, busy:false}, // Programmeur
+    {name:'planner_agent',  desc:'Maakt gedetailleerde plannen',    tasks:0, busy:false}, // Strateeg
+    {name:'executor_agent', desc:'Voert acties uit via GitHub',     tasks:0, busy:false}, // Uitvoerder (schrijft naar GitHub)
+    {name:'critic_agent',   desc:'Kwaliteitsreviewer & ethiek',     tasks:0, busy:false}, // Criticus & morele bewaker
+    {name:'memory_agent',   desc:'Persistente herinneringen',       tasks:0, busy:false}, // Geheugenspecialist
   ],
+  // Beschikbare externe koppelingen (apps die we kunnen verbinden)
   connectors:[
-    {name:'Gmail / SMTP',    icon:'✉', on:true,  desc:'E-mails versturen'},
-    {name:'Python Executor', icon:'⚡', on:true,  desc:'Scripts uitvoeren'},
-    {name:'GitHub MCP',      icon:'◈', on:true,  desc:'Code & repositories'},
-    {name:'Filesystem MCP',  icon:'◎', on:true,  desc:'Bestanden lezen/schrijven'},
-    {name:'Slack MCP',       icon:'◉', on:false, desc:'Team berichten'},
-    {name:'Notion MCP',      icon:'▣', on:false, desc:'Documenten & databases'},
-    {name:'Postgres MCP',    icon:'⊞', on:false, desc:'Database queries'},
-    {name:'Browser MCP',     icon:'⊕', on:false, desc:'Web automatisering'},
+    {name:'Claude AI',       icon:'🤖', on:true,  desc:'Anthropic claude-sonnet-4-5'}, // Altijd aan
+    {name:'GitHub MCP',      icon:'◈',  on:true,  desc:'Code & repositories'},         // Altijd aan
+    {name:'Gmail / SMTP',    icon:'✉',  on:false, desc:'E-mails versturen'},           // Toekomstige koppeling
+    {name:'Slack MCP',       icon:'◉',  on:false, desc:'Team berichten'},              // Toekomstige koppeling
+    {name:'Notion MCP',      icon:'▣',  on:false, desc:'Documenten & databases'},      // Toekomstige koppeling
+    {name:'Browser MCP',     icon:'⊕',  on:false, desc:'Web automatisering'},          // Toekomstige koppeling
   ],
 };
 
+// ── Snelkoppelingen (ACTIES tab) ───────────────────────────
+// Elke actie heeft een vooraf ingevulde opdracht (tpl = template).
+// Als je op een actieknop tikt, wordt de template in het invoerveld gezet.
 const ACTIONS=[
-  {id:'email',    icon:'✉',  label:'MAIL',     desc:'E-mail versturen via agent',    agent:'executor_agent', tpl:'Stuur een professionele e-mail naar team@bedrijf.nl met onderwerp "Sprint Update" en een korte voortgangsrapportage voor deze week.'},
-  {id:'script',   icon:'⚡',  label:'SCRIPT',   desc:'Python script uitvoeren',       agent:'executor_agent', tpl:'Voer een Python script uit dat systeemstatus controleert, geheugengebruik logt en een rapport genereert in /tmp/report.txt'},
-  {id:'research', icon:'⊕',  label:'RESEARCH', desc:'Informatie analyseren',         agent:'research_agent', tpl:'Analyseer de voor- en nadelen van multi-agent AI architecturen versus single-model aanpak voor enterprise gebruik in 2025.'},
-  {id:'code',     icon:'◈',  label:'CODE',     desc:'Code genereren',                agent:'code_agent',     tpl:'Schrijf een async Python klasse AsyncTaskQueue met prioriteit-gebaseerde verwerking, exponentiële retry-logica en een audit trail.'},
-  {id:'plan',     icon:'◎',  label:'PLAN',     desc:'Projectplan opstellen',         agent:'planner_agent',  tpl:'Maak een gedetailleerd deploymentplan voor Aetherion op een VPS met Docker, nginx reverse proxy en automatische SSL-certificaten.'},
-  {id:'review',   icon:'◉',  label:'REVIEW',   desc:'Output beoordelen',             agent:'critic_agent',   tpl:'Beoordeel deze Python code op kwaliteit, veiligheid en performance: def run(tasks): return [t() for t in tasks]'},
-  {id:'memory',   icon:'▣',  label:'GEHEUGEN', desc:'Geheugen doorzoeken',           agent:'memory_agent',   tpl:'Zoek in het geheugen naar alle eerdere onderzoekstaken over multi-agent systemen en vat de belangrijkste bevindingen samen.'},
-  {id:'parallel', icon:'⋈',  label:'PARALLEL', desc:'Meerdere agents tegelijk',      agent:'auto',           tpl:'Voer parallel uit: (1) onderzoek LangGraph voordelen, (2) schrijf een voorbeeld orchestrator, (3) maak een deploymentplan.'},
+  {id:'research', icon:'⊕', label:'RESEARCH', desc:'Informatie analyseren', agent:'research_agent', tpl:'Analyseer de voor- en nadelen van multi-agent AI architecturen voor enterprise gebruik in 2025.'},
+  {id:'code',     icon:'◈', label:'CODE',     desc:'Code genereren',        agent:'code_agent',     tpl:'Schrijf een async Python klasse AsyncTaskQueue met prioriteit-gebaseerde verwerking en retry-logica.'},
+  {id:'plan',     icon:'◎', label:'PLAN',     desc:'Projectplan opstellen', agent:'planner_agent',  tpl:'Maak een deploymentplan voor Aetherion op een VPS met Docker en nginx reverse proxy.'},
+  {id:'github',   icon:'◈', label:'GITHUB',   desc:'Repo analyseren',       agent:'executor_agent', tpl:'Analyseer de laatste commits en open issues in onze GitHub repo en geef aanbevelingen.'},
+  {id:'review',   icon:'◉', label:'REVIEW',   desc:'Code beoordelen',       agent:'critic_agent',   tpl:'Beoordeel deze code op kwaliteit en veiligheid: def run(tasks): return [t() for t in tasks]'},
+  {id:'memory',   icon:'▣', label:'GEHEUGEN', desc:'Sessie doorzoeken',     agent:'memory_agent',   tpl:'Vat de belangrijkste besluiten en bevindingen van deze sessie samen.'},
+  {id:'issue',    icon:'⚡', label:'ISSUE',    desc:'GitHub issue aanmaken', agent:'executor_agent', tpl:'Maak een GitHub issue aan voor: verbeter de UI performance van de terminal output'},
+  {id:'parallel', icon:'⋈', label:'PARALLEL', desc:'Multi-agent taak',      agent:'auto',           tpl:'Voer parallel uit: (1) onderzoek LangGraph voordelen, (2) schrijf een voorbeeld orchestrator, (3) maak een deploymentplan.'},
 ];
 
+// ── Moreel kompas — geblokkeerde woorden ──────────────────
+// Als een opdracht één van deze woorden bevat, wordt die DIRECT geblokkeerd.
+// Dit beschermt de visie: helpen van leven, niet schaden.
 const BLOCKED=['surveil','malware','ransomware','deceive','manipulate','spy on','keylogger','ddos','rootkit','exploit'];
 
-const RESP={
-  research_agent: i=>({summary:`Analyse afgerond voor: "${i.slice(0,70)}..."\n\nKernbevindingen: 3 relevante bronnen geanalyseerd. Hoge betrouwbaarheid. Aanbeveling: verdiep met primaire bronnen voor productie.`, key_points:['Modulaire architectuur essentieel voor schaling','MCP protocol verlaagt coupling significant','Ethische bewaking vereist aparte validatielaag'], confidence:'high'}),
-  code_agent:     i=>({language:'python', code:`async def execute_task(instruction: str) -> dict:\n    """Gegenereerd door Aetherion Code Agent\n    Args: instruction - de taak om uit te voeren\n    Returns: dict met resultaat en metadata\n    """\n    result = await orchestrator.run({\n        "type": "auto",\n        "instruction": instruction,\n        "priority": Priority.NORMAL\n    })\n    return {"output": result.output, "agent": result.agent}`, explanation:'Volledig async met type hints, docstring en error handling.', dependencies:['asyncio','aetherion','typing']}),
-  planner_agent:  i=>({goal_summary:i.slice(0,80), steps:[{step:1,action:'Analyseer vereisten & context',agent:'research_agent'},{step:2,action:'Implementeer kerncomponenten',agent:'code_agent'},{step:3,action:'Test & valideer output',agent:'critic_agent'},{step:4,action:'Deploy & monitor productie',agent:'executor_agent'}], estimated_complexity:'medium', risks:['API rate limits bij hoog volume','Onvoldoende test coverage bij snelle iteratie']}),
-  executor_agent: i=>({action_performed:i.slice(0,70), status:'success', result:'Actie succesvol uitgevoerd via MCP bridge. Geen onverwachte side-effects gedetecteerd. Audit log bijgewerkt.', reversible:true, side_effects:[]}),
-  critic_agent:   i=>({score:8, verdict:'approved', strengths:['Heldere structuur en naamgeving','Goede separation of concerns','Async implementatie correct'], issues:['Type hints ontbreken op enkele plekken','Geen unit tests bijgevoegd'], ethical_concerns:[]}),
-  memory_agent:   i=>({memories_found:[{content:'MCP integratie succesvol getest — 4 connectors actief',agent:'research_agent'},{content:'Orchestrator v2 gebouwd met retry en prioriteitswachtrij',agent:'code_agent'},{content:'Moreel kompas: 9 regels geladen en gevalideerd',agent:'planner_agent'}], synthesis:'3 relevante herinneringen gevonden. Context consistent met huidige sessie. Aanbeveling: gebruik eerdere MCP configuratie.', relevance:'high'}),
-};
-
-// ── Matrix rain ────────────────────────────────────────────
+// ── Matrix regen animatie (achtergrond effect) ────────────
+// Tekent vallende Japanse/Latijnse tekens op een canvas achter de app.
+// Dit is puur visueel — het doet niks functioneels.
 (()=>{
   const c=document.getElementById('mc'),x=c.getContext('2d');
-  const ch='アイウエオカキクケコABCDEFGHIJKLMNOP0123456789@#$%&*<>{}';
-  let cols,drops;
+  const ch='アイウエオカキクケコABCDEFGHIJKLMNOP0123456789@#$%&*<>{}'; // De tekens die vallen
+  let cols,drops; // cols = aantal kolommen, drops = positie per kolom
+  // Pas canvas aan als scherm van grootte verandert
   const r=()=>{ c.width=window.innerWidth; c.height=window.innerHeight; cols=Math.floor(c.width/13); drops=Array(cols).fill(1); };
   r(); window.addEventListener('resize',r);
+  // Teken elke 55ms een nieuw frame
   setInterval(()=>{
-    x.fillStyle='rgba(0,10,2,.05)'; x.fillRect(0,0,c.width,c.height);
+    x.fillStyle='rgba(0,10,2,.05)'; x.fillRect(0,0,c.width,c.height); // Licht vervagen voor "staart" effect
     x.font='11px monospace';
     for(let i=0;i<cols;i++){
-      const bright=Math.random()>.98;
+      const bright=Math.random()>.98; // 2% kans op heldere teken
       x.fillStyle=bright?'#aaffbb':'#00ff41';
       x.fillText(ch[Math.floor(Math.random()*ch.length)],i*13,drops[i]*13);
-      if(drops[i]*13>c.height&&Math.random()>.975) drops[i]=0;
-      drops[i]++;
+      if(drops[i]*13>c.height&&Math.random()>.975) drops[i]=0; // Reset naar boven
+      drops[i]++; // Zet teken lager
     }
   },55);
 })();
 
-// ── Navigation ─────────────────────────────────────────────
+// ── Toast melding (kleine pop-up onderaan) ────────────────
+// Laat een kort berichtje zien voor 2.5 seconden, dan verdwijnt het.
+// Gebruik: toast('Opgeslagen ✓')
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+// ── Navigatie tussen tabbladen ─────────────────────────────
+// Wisselt het actieve tabblad en bijbehorend scherm.
+// Laadt ook automatisch GitHub data als je naar die tab gaat.
 function go(id){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['cmd','actions','connectors','status','config'][i]===id));
+  // Zet 'active' klasse op het juiste tabblad
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['cmd','actions','github','status','config'][i]===id));
+  // Verberg alle schermen, toon alleen het gevraagde
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
-  if(id==='status') renderStatus();
-  if(id==='connectors') renderConnectors();
+  if(id==='status') renderStatus();   // Ververs agent status
+  if(id==='github') loadGithub();     // Laad GitHub data
 }
 
-// ── Chips ──────────────────────────────────────────────────
+// ── Agent & prioriteit selectie (chips) ───────────────────
+// sa = selecteer agent, sp = selecteer prioriteit
+// Haalt 'active' van alle chips en zet het op de aangeklikte
 function sa(el){ document.querySelectorAll('#achips .chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); S.agent=el.dataset.a; }
 function sp(el){ document.querySelectorAll('.pchip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); S.prio=el.dataset.p; }
 
-// ── Log ────────────────────────────────────────────────────
+// ── Terminal log ───────────────────────────────────────────
+// Voegt een regel toe aan de terminal output met timestamp.
+// cls = kleurklasse: 'ok'=groen, 'er'=rood, 'wn'=oranje, 'inf'=blauw, 'dm'=grijs
 function log(msg,cls='dm'){
   const t=document.getElementById('terminal');
-  const now=new Date().toTimeString().slice(0,8);
+  const now=new Date().toTimeString().slice(0,8); // Huidige tijd HH:MM:SS
   const d=document.createElement('div'); d.className='ll';
   d.innerHTML=`<span class="lt">[${now}]</span><span class="lm ${cls}">${msg}</span>`;
-  t.appendChild(d); t.scrollTop=t.scrollHeight;
+  t.appendChild(d);
+  t.scrollTop=t.scrollHeight; // Scroll automatisch naar beneden
 }
-function logR(r,a){
-  const t=document.getElementById('terminal');
-  const c=document.createElement('div'); c.className='rcard'; c.setAttribute('data-a',a.replace('_agent','').toUpperCase());
-  let h='';
-  if(r.summary)         h+=`<div><span class="rk">ANALYSE: </span><span class="rv">${r.summary.slice(0,200)}</span></div>`;
-  if(r.code)            h+=`<div><span class="rk">CODE (${r.language}): </span><span class="rv">${r.code.slice(0,180)}...</span></div>`;
-  if(r.steps)           h+=`<div><span class="rk">PLAN: </span><span class="rv">${r.steps.map(s=>`${s.step}. ${s.action} [${s.agent.replace('_agent','')}]`).join(' → ')}</span></div>`;
-  if(r.score)           h+=`<div><span class="rk">REVIEW: </span><span class="rv">${r.score}/10 — ${(r.verdict||'').toUpperCase()} | Sterk: ${(r.strengths||[]).join(', ')}</span></div>`;
-  if(r.memories_found)  h+=`<div><span class="rk">GEHEUGEN: </span><span class="rv">${r.memories_found.length} gevonden — ${r.synthesis||''}</span></div>`;
-  if(r.result)          h+=`<div><span class="rk">RESULTAAT: </span><span class="rv">${r.result}</span></div>`;
-  if(!h) h=`<div class="rv">${JSON.stringify(r).slice(0,250)}</div>`;
-  c.innerHTML=h; t.appendChild(c); t.scrollTop=t.scrollHeight;
-}
+// Leegt de terminal en toont bevestiging
 function clr(){ document.getElementById('terminal').innerHTML=''; log('Terminal gewist.'); }
 
-// ── Run ────────────────────────────────────────────────────
+// ── Geheugen (persistent via localStorage) ────────────────
+// localStorage = opslag in de telefoon/browser die blijft na afsluiten.
+// Max 50 herinneringen — oudste wordt verwijderd als het vol is.
+
+// Voegt een nieuwe herinnering toe en slaat alles op in de telefoon
+function addMemory(agent, text){
+  const entry={
+    agent,                                    // Welke agent het antwoord gaf
+    text:text.slice(0,200),                   // Max 200 tekens bewaren
+    time:new Date().toTimeString().slice(0,8), // Tijd HH:MM:SS
+    date:new Date().toLocaleDateString('nl')   // Datum in Nederlands formaat
+  };
+  S.memory.push(entry);
+  if(S.memory.length>50) S.memory.shift(); // Verwijder oudste als >50
+  try{ localStorage.setItem('av_memory', JSON.stringify(S.memory)); }catch(e){} // Sla op in telefoon
+  renderMemory(); // Ververs weergave
+}
+
+// Laadt opgeslagen geheugen uit de telefoon bij het starten van de app
+function loadMemory(){
+  try{
+    const saved=localStorage.getItem('av_memory');
+    if(saved){ S.memory=JSON.parse(saved); renderMemory(); }
+  }catch(e){}
+}
+
+// Tekent het geheugen als kaartjes in de STATUS tab
+function renderMemory(){
+  document.getElementById('mem-count').textContent=S.memory.length;
+  const el=document.getElementById('mem-list');
+  if(!S.memory.length){ el.innerHTML='<div style="color:var(--dim);font-size:10px;padding:8px">Nog geen geheugen...</div>'; return; }
+  // Nieuwste bovenaan tonen (slice().reverse() keert de volgorde om)
+  el.innerHTML=S.memory.slice().reverse().map(m=>`
+    <div class="mem-item">
+      <div class="mem-time">[${m.date||''} ${m.time}] ${m.agent.replace('_agent','').toUpperCase()}</div>
+      <div class="mem-text">${m.text}</div>
+    </div>
+  `).join('');
+}
+
+// Wist al het geheugen — zowel in de app als in de telefoon
+function clearMemory(){
+  S.memory=[]; S.history=[];
+  try{ localStorage.removeItem('av_memory'); }catch(e){}
+  renderMemory(); toast('Geheugen gewist');
+}
+
+// ── Gespreksgeschiedenis voor Claude ──────────────────────
+// Claude heeft geen eigen geheugen tussen berichten.
+// Wij sturen de laatste 10 berichten mee zodat Claude context heeft.
+// Voorbeeld: als je vraagt "en wat deed je daarna?" weet Claude waar je het over hebt.
+function addToHistory(role, content){
+  S.history.push({role, content:content.slice(0,600)}); // role = 'user' of 'assistant'
+  if(S.history.length>20) S.history=S.history.slice(-20); // Max 20 berichten bewaren
+}
+
+// ── Terminal exporteren als tekstbestand ──────────────────
+// Verzamelt alle tekst uit de terminal en maakt er een downloadbaar .txt bestand van.
+function exportTerminal(){
+  const lines=[...document.querySelectorAll('#terminal .lm, #terminal .rv')].map(e=>e.textContent).join('\n');
+  const blob=new Blob([`AETHERION VECTORIS — Export ${new Date().toLocaleString('nl')}\nQU1JR08=\n\n${lines}`],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); // Maak tijdelijke download-URL
+  a.download=`aetherion-${Date.now()}.txt`; // Bestandsnaam met timestamp
+  a.click(); // Trigger de download
+  toast('Terminal geëxporteerd ✓');
+}
+
+// ── GitHub issue sluiten ───────────────────────────────────
+// Stuurt een PATCH verzoek naar GitHub om een issue te sluiten.
+// num = het issue nummer (bijv. 42)
+async function closeIssue(num){
+  if(!S.githubToken){ toast('⚠ Geen GitHub token'); return; }
+  try{
+    await fetch(`https://api.github.com/repos/${S.githubRepo}/issues/${num}`,{
+      method:'PATCH', // PATCH = gedeeltelijk bijwerken
+      headers:{'Authorization':'Bearer '+S.githubToken,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+      body:JSON.stringify({state:'closed'}) // Zet status op 'gesloten'
+    });
+    toast(`Issue #${num} gesloten ✓`);
+    loadGithub(); // Ververs de GitHub tab
+  }catch(e){ toast('Fout: '+e.message); }
+}
+
+// ── Automatisch opnieuw proberen bij serverfouten ─────────
+// Als de server een fout geeft (500+), wacht even en probeer opnieuw.
+// retries=2 betekent: max 2 extra pogingen na de eerste mislukking.
+// Wachttijd verdubbelt elke poging: 1.5s → 3s
+async function fetchWithRetry(url, opts, retries=2){
+  for(let i=0;i<=retries;i++){
+    try{
+      const r=await fetch(url,opts);
+      if(r.ok||r.status===400) return r; // 400 = slechte invoer, niet opnieuw proberen
+      if(i<retries&&r.status>=500){
+        S.retried++; upd(); // Tel retry op in statistieken
+        await sl(1500*(i+1)); // Wacht langer bij elke poging
+        continue;
+      }
+      return r;
+    }catch(e){
+      if(i<retries){ S.retried++; upd(); await sl(1500*(i+1)); }
+      else throw e; // Gooi fout als alle pogingen mislukt zijn
+    }
+  }
+}
+
+// ── Config ─────────────────────────────────────────────────
+// Slaat de ingevulde API keys op in de telefoon
+function saveConfig(){
+  const claude=document.getElementById('cfg-claude').value.trim();
+  const github=document.getElementById('cfg-github').value.trim();
+  const repo=document.getElementById('cfg-repo').value.trim();
+  if(!claude||!github||!repo){ setCfgStatus('⚠ Vul alle velden in','wn'); return; }
+  localStorage.setItem('av_claude',claude);
+  localStorage.setItem('av_github',github);
+  localStorage.setItem('av_repo',repo);
+  S.claudeKey=claude; S.githubToken=github; S.githubRepo=repo;
+  setCfgStatus('✓ Opgeslagen!','ok');
+  updateConnStatus();
+  toast('Keys opgeslagen ✓');
+}
+// Laadt opgeslagen keys bij het starten van de app
+function loadConfig(){
+  const claude=localStorage.getItem('av_claude')||'';
+  const github=localStorage.getItem('av_github')||'';
+  const repo=localStorage.getItem('av_repo')||'';
+  document.getElementById('cfg-claude').value=claude;
+  document.getElementById('cfg-github').value=github;
+  document.getElementById('cfg-repo').value=repo;
+  S.claudeKey=claude; S.githubToken=github; S.githubRepo=repo;
+  updateConnStatus();
+}
+// Toont statusbericht in de KEYS tab (ok=groen, wn=oranje, er=rood)
+function setCfgStatus(msg,cls){
+  const el=document.getElementById('cfg-status');
+  el.textContent=msg;
+  el.style.color=cls==='ok'?'var(--g)':cls==='wn'?'var(--amb)':'var(--r)';
+}
+// Update de groene/oranje verbindingsdot in de header
+function updateConnStatus(){
+  const ok=S.claudeKey&&S.githubToken&&S.githubRepo;
+  const dot=document.getElementById('conn-dot');
+  const txt=document.getElementById('conn-status');
+  const tab=document.getElementById('tab-config');
+  if(ok){ dot.className='conn-dot on'; txt.textContent='VERBONDEN'; tab.style.color='var(--g)'; }
+  else { dot.className='conn-dot warn'; txt.textContent='NIET VERBONDEN'; tab.style.color='var(--amb)'; }
+}
+// Test of Claude en GitHub echt bereikbaar zijn met de ingevulde keys
+async function testConfig(){
+  setCfgStatus('⟳ Testen...','');
+  const r=[];
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':S.claudeKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:10,messages:[{role:'user',content:'hi'}]})
+    });
+    r.push(res.ok?'✓ Claude OK':'✗ Claude '+res.status);
+  }catch(e){ r.push('✗ Claude: '+e.message.slice(0,30)); }
+  try{
+    const res=await fetch(`https://api.github.com/repos/${S.githubRepo}`,{headers:{'Authorization':'Bearer '+S.githubToken}});
+    const d=await res.json();
+    r.push(res.ok?`✓ GitHub: ${d.name}`:'✗ GitHub '+res.status);
+  }catch(e){ r.push('✗ GitHub: '+e.message.slice(0,30)); }
+  setCfgStatus(r.join(' | '),'ok');
+  updateConnStatus();
+}
+
+// ── GitHub API hulpfuncties ──────────────────────────────
+// ghGet = haal data op (lezen), ghPost = stuur data (schrijven/aanmaken)────
+async function ghGet(path){ const r=await fetch(`https://api.github.com${path}`,{headers:{'Authorization':'Bearer '+S.githubToken,'Accept':'application/vnd.github+json'}}); return r.json(); }
+async function ghPost(path,body){ const r=await fetch(`https://api.github.com${path}`,{method:'POST',headers:{'Authorization':'Bearer '+S.githubToken,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)}); return r.json(); }
+
+// ── GitHub tab laden ─────────────────────────────────────
+// Haalt tegelijk repo info, issues en commits op — Promise.all = tegelijk = sneller────
+async function loadGithub(){
+  if(!S.githubToken||!S.githubRepo){ document.getElementById('gh-info').innerHTML='<div style="color:var(--amb);font-size:10px">⚠ Configureer eerst je keys in de KEYS tab</div>'; return; }
+  document.getElementById('gh-reponame').textContent=S.githubRepo;
+  try{
+    const [repo,issues,commits]=await Promise.all([
+      ghGet(`/repos/${S.githubRepo}`),
+      ghGet(`/repos/${S.githubRepo}/issues?state=open&per_page=8`),
+      ghGet(`/repos/${S.githubRepo}/commits?per_page=5`)
+    ]);
+    // Repo info
+    document.getElementById('gh-info').innerHTML=`
+      <div class="gh-item"><span class="gh-meta">⭐ Stars</span><span class="gh-num">${repo.stargazers_count}</span></div>
+      <div class="gh-item"><span class="gh-meta">🍴 Forks</span><span class="gh-num">${repo.forks_count}</span></div>
+      <div class="gh-item"><span class="gh-meta">🐛 Open issues</span><span class="gh-num">${repo.open_issues_count}</span></div>
+      <div class="gh-item"><span class="gh-meta">🌿 Branch</span><span class="gh-num">${repo.default_branch}</span></div>
+      <div class="gh-item"><span class="gh-meta">📝 Taal</span><span class="gh-num">${repo.language||'?'}</span></div>
+    `;
+    // Issues
+    const issEl=document.getElementById('gh-issues');
+    if(Array.isArray(issues)&&issues.length){
+      issEl.innerHTML=issues.map(i=>`
+        <div class="gh-item">
+          <span class="gh-num">#${i.number}</span>
+          <span class="gh-title">${i.title}</span>
+          <button onclick="closeIssue(${i.number})" style="background:transparent;border:1px solid var(--r);color:var(--r);font-size:8px;padding:2px 5px;cursor:pointer;border-radius:2px;flex-shrink:0">✕</button>
+        </div>
+      `).join('');
+    } else { issEl.innerHTML='<div style="color:var(--dim);font-size:10px">Geen open issues 🎉</div>'; }
+    // Commits
+    const comEl=document.getElementById('gh-commits');
+    if(Array.isArray(commits)&&commits.length){
+      comEl.innerHTML=commits.map(c=>`
+        <div class="gh-item">
+          <span class="gh-title">${c.commit.message.split('\n')[0].slice(0,50)}</span>
+          <span class="gh-meta">${c.commit.author.name}</span>
+        </div>
+      `).join('');
+    } else { comEl.innerHTML='<div style="color:var(--dim);font-size:10px">Geen commits</div>'; }
+    toast('GitHub data geladen ✓');
+  }catch(e){ document.getElementById('gh-info').innerHTML=`<div style="color:var(--r);font-size:10px">Fout: ${e.message}</div>`; }
+}
+
+async function quickIssue(){
+  const title=prompt('Issue titel:');
+  if(!title) return;
+  if(!S.githubToken){ toast('⚠ Geen GitHub token'); return; }
+  try{
+    const i=await ghPost(`/repos/${S.githubRepo}/issues`,{title,body:'Aangemaakt via Aetherion Vectoris 🚀\n\nQU1JR08=',labels:['aetherion']});
+    toast(`Issue #${i.number} aangemaakt ✓`);
+    loadGithub();
+  }catch(e){ toast('Fout: '+e.message); }
+}
+
+// ── Run / Exec ─────────────────────────────────────────────
 async function run(enqueue=false){
   const inp=document.getElementById('inp').value.trim();
   if(!inp){ log('Geen instructie opgegeven.','wn'); return; }
   if(BLOCKED.some(k=>inp.toLowerCase().includes(k))){
     S.total++; S.blk++; upd();
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','bl');
-    log('🚫  MOREEL KOMPAS — ACTIE GEBLOKKEERD','bl');
-    log('Verboden patroon gedetecteerd. Audit log bijgewerkt.','er');
+    log('🚫 MOREEL KOMPAS — ACTIE GEBLOKKEERD','bl');
+    log('Verboden patroon gedetecteerd.','er');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','bl');
     return;
   }
@@ -632,22 +795,261 @@ async function run(enqueue=false){
     return;
   }
   const btn=document.getElementById('rbtn');
-  btn.classList.add('off'); await exec(inp); btn.classList.remove('off');
+  btn.classList.add('off');
+  document.getElementById('stream-bar').classList.add('on');
+  await exec(inp);
+  btn.classList.remove('off');
+  document.getElementById('stream-bar').classList.remove('on');
   document.getElementById('inp').value='';
 }
 
+async function exec(inp){
+  const t0=Date.now();
+  const tid=Math.random().toString(36).slice(2,10).toUpperCase();
+  const an=S.agent==='auto'?route(inp):S.agent;
+  const sh=an.replace('_agent','').toUpperCase();
+  const ag=S.agents.find(a=>a.name===an);
+  if(ag) ag.busy=true;
+
+  if(!S.claudeKey){
+    log('⚠ Geen Claude API key — ga naar KEYS tab','wn');
+    toast('Configureer eerst je API keys ⚙');
+    if(ag) ag.busy=false;
+    return;
+  }
+
+  log(`[${tid}][${S.prio}] → ${sh}: ${inp.slice(0,60)}...`,'ok');
+
+  // GitHub context ophalen
+  let githubContext='';
+  if(S.githubToken&&S.githubRepo){
+    try{
+      log(`[${tid}] ◈ GitHub context laden...`,'inf');
+      const [repo,issues,commits]=await Promise.all([
+        ghGet(`/repos/${S.githubRepo}`),
+        ghGet(`/repos/${S.githubRepo}/issues?state=open&per_page=5`),
+        ghGet(`/repos/${S.githubRepo}/commits?per_page=3`)
+      ]);
+      githubContext=`\n\nGITHUB REPO: ${S.githubRepo}
+- Beschrijving: ${repo.description||'geen'}
+- Sterren: ${repo.stargazers_count} | Open issues: ${repo.open_issues_count}
+- Open issues: ${Array.isArray(issues)?issues.map(i=>`#${i.number}: ${i.title}`).join(', '):'geen'}
+- Laatste commits: ${Array.isArray(commits)?commits.map(c=>`"${c.commit.message.split('\n')[0].slice(0,40)}"`).join(' | '):'geen'}`;
+      log(`[${tid}] ✓ GitHub context geladen`,'ok');
+    }catch(e){ log(`[${tid}] ⚠ GitHub: ${e.message.slice(0,40)}`,'wn'); }
+  }
+
+  const systemPrompts={
+    research_agent:`Je bent de Research Agent van Aetherion Vectoris — een AI orchestrator gebouwd met de missie het leven te helpen. Analyseer grondig en geef heldere inzichten. Reageer in het Nederlands. Wees beknopt maar volledig.${githubContext}`,
+    code_agent:`Je bent de Code Agent van Aetherion Vectoris. Schrijf productie-waardige, goed gedocumenteerde code. Gebruik moderne best practices. Leg altijd kort uit wat de code doet.${githubContext}`,
+    planner_agent:`Je bent de Planner Agent van Aetherion Vectoris. Maak concrete, uitvoerbare plannen met duidelijke stappen. Houd de visie in gedachten: helpen van leven.${githubContext}`,
+    executor_agent:`Je bent de Executor Agent van Aetherion Vectoris. Je hebt toegang tot GitHub en kunt issues aanmaken en bewerken. Als een issue aangemaakt moet worden, eindig dan met JSON: {"create_issue":true,"title":"...","body":"..."}${githubContext}`,
+    critic_agent:`Je bent de Critic Agent van Aetherion Vectoris. Beoordeel kritisch op kwaliteit, veiligheid en ethiek. Geef altijd een score (1-10) en concrete verbeterpunten. Houd de morele visie in gedachten.${githubContext}`,
+    memory_agent:`Je bent de Memory Agent van Aetherion Vectoris. Syntheseer informatie uit deze sessie en maak verbanden. Haal patronen en inzichten op uit de beschikbare context.${githubContext}`,
+  };
+  const sysp=systemPrompts[an]||systemPrompts.research_agent;
+
+  try{
+    log(`[${tid}] 🤖 Claude denkt na...`,'inf');
+    addToHistory('user', inp);
+    const r=await fetchWithRetry('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'x-api-key':S.claudeKey,
+        'anthropic-version':'2023-06-01',
+        'content-type':'application/json',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:sysp,messages:S.history.slice(-10)})
+    });
+    if(!r.ok){ const e=await r.json(); throw new Error(e.error?.message||r.status); }
+    const data=await r.json();
+    const responseText=data.content.map(b=>b.text||'').join('');
+
+    // GitHub issue aanmaken als executor het vraagt
+    if(an==='executor_agent'&&S.githubToken){
+      try{
+        const jm=responseText.match(/\{"create_issue"[\s\S]*?\}/);
+        if(jm){
+          const ga=JSON.parse(jm[0]);
+          if(ga.create_issue){
+            const issue=await ghPost(`/repos/${S.githubRepo}/issues`,{title:ga.title,body:ga.body+'\n\n_Aangemaakt door Aetherion Vectoris 🤖 QU1JR08=_',labels:['aetherion']});
+            log(`[${tid}] ◈ Issue #${issue.number} aangemaakt: ${issue.title}`,'ok');
+            toast(`Issue #${issue.number} aangemaakt! ✓`);
+          }
+        }
+      }catch(e){ log(`[${tid}] ⚠ GitHub actie: ${e.message.slice(0,40)}`,'wn'); }
+    }
+
+    const dur=Date.now()-t0;
+    S.total++; S.ok++;
+    if(ag){ ag.busy=false; ag.tasks++; }
+    log(`[${tid}] ✓ ${sh} klaar in ${dur}ms`,'ok');
+
+    // Response tonen
+    const t=document.getElementById('terminal');
+    const card=document.createElement('div');
+    card.className='rcard'; card.setAttribute('data-a',sh);
+    const cleanText=responseText.replace(/\{"create_issue"[\s\S]*?\}/g,'').trim();
+    card.innerHTML=`<div><span class="rv">${cleanText.slice(0,700).replace(/</g,'&lt;').replace(/>/g,'&gt;')}${cleanText.length>700?'...':''}</span></div>`;
+    t.appendChild(card); t.scrollTop=t.scrollHeight;
+
+    // Sla op in geheugen & history
+    addMemory(an, cleanText.slice(0,150));
+    addToHistory('assistant', cleanText.slice(0,600));
+
+    // Spreek antwoord voor
+    Speech.speak(cleanText);
+    upd();
+
+  }catch(e){
+    S.total++; S.blk++;
+    if(ag) ag.busy=false;
+    log(`[${tid}] ✗ Fout: ${e.message.slice(0,80)}`,'er');
+    upd();
+  }
+}
+
+// Bepaalt automatisch welke agent de taak krijgt op basis van trefwoorden
 function route(inp){
   const t=inp.toLowerCase();
   if(/schrijf|code|functie|script|klasse|implementeer|build|debug/.test(t)) return 'code_agent';
   if(/plan|ontwerp|strategie|stappen|roadmap|deployment/.test(t)) return 'planner_agent';
-  if(/voer|mail|stuur|start|run|execute|bestand|file/.test(t)) return 'executor_agent';
-  if(/review|beoordeel|check|evalueer|kwaliteit/.test(t)) return 'critic_agent';
-  if(/geheugen|herinner|memory|zoek in|opgeslagen/.test(t)) return 'memory_agent';
+  if(/issue|commit|github|repo|push|branch|merge|pr/.test(t)) return 'executor_agent';
+  if(/review|beoordeel|check|evalueer|kwaliteit|score/.test(t)) return 'critic_agent';
+  if(/geheugen|herinner|memory|sessie|samenvatting/.test(t)) return 'memory_agent';
   return 'research_agent';
 }
-const sl=ms=>new Promise(r=>setTimeout(r,ms));
+
+// ── Spraak: Herkenning & Synthese ──────────────────────────
+const Speech = {
+  recognition: null,
+  synthesis: window.speechSynthesis,
+  listening: false,
+  supported: 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window,
+  ttsEnabled: true,
+  waveInterval: null,
+
+  init(){
+    if(!this.supported){ document.getElementById('mic-btn').style.opacity='.3'; document.getElementById('mic-status').textContent='Spraak niet ondersteund'; return; }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    this.recognition = new SR();
+    this.recognition.lang = 'nl-NL';
+    this.recognition.continuous = false;
+    this.recognition.interimResults = true;
+
+    this.recognition.onstart = () => {
+      this.listening = true;
+      document.getElementById('mic-btn').className = 'listening';
+      document.getElementById('mic-status').textContent = '🔴 Luisteren...';
+      document.getElementById('mic-status').className = 'mic-status on';
+      this.startWave();
+      log('🎤 Spraakherkenning actief — spreek nu...','inf');
+    };
+
+    this.recognition.onresult = (e) => {
+      let interim = '', final = '';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        if(e.results[i].isFinal) final += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
+      }
+      const inp = document.getElementById('inp');
+      if(final){ inp.value = final; document.getElementById('mic-status').textContent = '✓ Herkend: "'+final.slice(0,40)+'"'; }
+      else if(interim){ inp.value = interim; document.getElementById('mic-status').textContent = '⟳ '+interim.slice(0,40)+'...'; }
+    };
+
+    this.recognition.onend = () => {
+      this.listening = false;
+      document.getElementById('mic-btn').className = '';
+      document.getElementById('mic-status').className = 'mic-status';
+      this.stopWave();
+      const val = document.getElementById('inp').value.trim();
+      if(val){
+        document.getElementById('mic-status').textContent = '✓ Gereed — druk EXECUTE of spreek opnieuw';
+        log('🎤 Herkend: "'+val.slice(0,60)+'"','ok');
+        // Auto-execute na 1.5s
+        setTimeout(()=>{ if(document.getElementById('inp').value.trim()) run(false); },1500);
+      } else {
+        document.getElementById('mic-status').textContent = 'Niets herkend — probeer opnieuw';
+      }
+    };
+
+    this.recognition.onerror = (e) => {
+      this.listening = false;
+      document.getElementById('mic-btn').className = '';
+      document.getElementById('mic-status').textContent = 'Fout: '+e.error;
+      document.getElementById('mic-status').className = 'mic-status';
+      this.stopWave();
+      log('🎤 Spraakfout: '+e.error,'wn');
+    };
+  },
+
+  startWave(){
+    const bars = document.querySelectorAll('#voice-wave span');
+    this.waveInterval = setInterval(()=>{
+      bars.forEach(b=>{ b.style.height = (4+Math.random()*16)+'px'; });
+    },100);
+  },
+
+  stopWave(){
+    clearInterval(this.waveInterval);
+    document.querySelectorAll('#voice-wave span').forEach(b=>b.style.height='4px');
+  },
+
+  speak(text){
+    if(!this.ttsEnabled||!this.synthesis) return;
+    this.synthesis.cancel();
+    // Schoon tekst op — geen code blokken voorlezen
+    const clean = text
+      .replace(/```[\s\S]*?```/g,'[code blok]')
+      .replace(/[#*`_~>]/g,'')
+      .replace(/\{[\s\S]*?\}/g,'')
+      .replace(/\s+/g,' ')
+      .slice(0,400);
+
+    const utt = new SpeechSynthesisUtterance(clean);
+    utt.lang = 'nl-NL';
+    utt.rate = 1.0;
+    utt.pitch = 1.0;
+    utt.volume = 0.9;
+
+    // Kies Nederlandse stem als beschikbaar
+    const voices = this.synthesis.getVoices();
+    const nlVoice = voices.find(v=>v.lang.startsWith('nl'))||voices.find(v=>v.lang.startsWith('en'));
+    if(nlVoice) utt.voice = nlVoice;
+
+    utt.onstart = ()=>{
+      document.getElementById('mic-btn').className = 'speaking';
+      document.getElementById('mic-status').textContent = '🔊 Claude spreekt...';
+      document.getElementById('mic-status').className = 'mic-status speaking';
+    };
+    utt.onend = ()=>{
+      document.getElementById('mic-btn').className = '';
+      document.getElementById('mic-status').textContent = 'Tik 🎤 om te antwoorden';
+      document.getElementById('mic-status').className = 'mic-status';
+    };
+    this.synthesis.speak(utt);
+  }
+};
+
+function toggleMic(){
+  if(!Speech.supported){ toast('Spraak niet ondersteund in deze browser'); return; }
+  if(Speech.synthesis&&Speech.synthesis.speaking){ Speech.synthesis.cancel(); return; }
+  if(Speech.listening){ Speech.recognition.stop(); return; }
+  Speech.recognition.start();
+}
+
+function toggleTTS(){
+  Speech.ttsEnabled=!Speech.ttsEnabled;
+  toast(Speech.ttsEnabled?'🔊 Spraak aan':'🔇 Spraak uit');
+}
+
+// Spraak init na pagina load
+window.addEventListener('load',()=>{ Speech.init(); if(Speech.synthesis) Speech.synthesis.getVoices(); });
+
 
 // ── Actions ────────────────────────────────────────────────
+// Tekent de actieknoppen in de ACTIES tab
 function renderActions(){
   document.getElementById('agrid').innerHTML=ACTIONS.map(a=>`
     <button class="acard" onclick="loadAction('${a.id}')">
@@ -656,7 +1058,7 @@ function renderActions(){
     </button>
   `).join('');
 }
-
+// Laadt een actie-template in het invoerveld en selecteert de juiste agent
 function loadAction(id){
   const a=ACTIONS.find(x=>x.id===id); if(!a) return;
   document.getElementById('inp').value=a.tpl;
@@ -666,6 +1068,7 @@ function loadAction(id){
   go('cmd'); log(`Template: ${a.label} geladen`,'inf');
 }
 
+// Vernieuwt de wachtrij weergave en de badge teller op de ACTIES tab
 function rQ(){
   const el=document.getElementById('qlist'),cnt=document.getElementById('qcount'),b=document.getElementById('qbadge');
   cnt.textContent=S.queue.length; b.textContent=S.queue.length; b.classList.toggle('on',S.queue.length>0);
@@ -679,28 +1082,8 @@ function rQ(){
   `).join('');
 }
 
-// ── Connectors ─────────────────────────────────────────────
-function renderConnectors(){
-  document.getElementById('clist').innerHTML=S.connectors.map((c,i)=>`
-    <div class="ccard" onclick="togCon(${i})">
-      <div class="cdot ${c.on?'on':'off'}"></div>
-      <span class="cicon">${c.icon}</span>
-      <div class="cinfo">
-        <div class="cname">${c.name}</div>
-        <div class="cstatus">${c.desc} — ${c.on?'VERBONDEN':'NIET VERBONDEN'}</div>
-      </div>
-      <div class="ctoggle ${c.on?'on':'off'}">${c.on?'AAN':'UIT'}</div>
-    </div>
-  `).join('');
-}
-
-function togCon(i){
-  S.connectors[i].on=!S.connectors[i].on; renderConnectors();
-  const c=S.connectors[i]; go('cmd');
-  log(`${c.name}: ${c.on?'verbonden ✓':'losgekoppeld'}`,c.on?'inf':'wn');
-}
-
 // ── Status ─────────────────────────────────────────────────
+// Tekent de agent status kaartjes in de STATUS tab
 function renderStatus(){
   document.getElementById('alist').innerHTML=S.agents.map(a=>`
     <div class="arow ${a.busy?'busy':''}">
@@ -712,8 +1095,10 @@ function renderStatus(){
       <div class="atasks">${a.tasks}</div>
     </div>
   `).join('');
+  renderMemory();
 }
 
+// Vernieuwt alle statistieken: header tellers en STATUS tab
 function upd(){
   document.getElementById('hok').textContent=S.ok;
   document.getElementById('hblk').textContent=S.blk;
@@ -723,226 +1108,26 @@ function upd(){
   document.getElementById('sr').textContent=S.retried;
 }
 
-// ── Config opslaan/laden ───────────────────────────────────
-function saveConfig(){
-  const claude=document.getElementById('cfg-claude').value.trim();
-  const github=document.getElementById('cfg-github').value.trim();
-  const repo=document.getElementById('cfg-repo').value.trim();
-  if(!claude||!github||!repo){ setCfgStatus('⚠ Vul alle velden in','wn'); return; }
-  localStorage.setItem('av_claude',claude);
-  localStorage.setItem('av_github',github);
-  localStorage.setItem('av_repo',repo);
-  S.claudeKey=claude; S.githubToken=github; S.githubRepo=repo;
-  setCfgStatus('✓ Opgeslagen in localStorage','ok');
-  updateKeyIndicator();
-}
-
-function loadConfig(){
-  const claude=localStorage.getItem('av_claude')||'';
-  const github=localStorage.getItem('av_github')||'';
-  const repo=localStorage.getItem('av_repo')||'';
-  document.getElementById('cfg-claude').value=claude;
-  document.getElementById('cfg-github').value=github;
-  document.getElementById('cfg-repo').value=repo;
-  S.claudeKey=claude; S.githubToken=github; S.githubRepo=repo;
-  updateKeyIndicator();
-}
-
-function setCfgStatus(msg,cls){
-  const el=document.getElementById('cfg-status');
-  el.textContent=msg; el.className=''; el.style.color=cls==='ok'?'var(--g)':cls==='wn'?'var(--amb)':'var(--r)';
-}
-
-function updateKeyIndicator(){
-  const tab=document.getElementById('tab-config');
-  const ok=S.claudeKey&&S.githubToken&&S.githubRepo;
-  tab.style.color=ok?'var(--g)':'var(--amb)';
-}
-
-async function testConfig(){
-  setCfgStatus('⟳ Verbinding testen...','wn');
-  const results=[];
-  // Test Claude
-  try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'x-api-key':S.claudeKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:20,messages:[{role:'user',content:'ping'}]})
-    });
-    results.push(r.ok?'✓ Claude OK':'✗ Claude: '+r.status);
-  }catch(e){ results.push('✗ Claude: '+e.message.slice(0,40)); }
-  // Test GitHub
-  try{
-    const r=await fetch(`https://api.github.com/repos/${S.githubRepo}`,{
-      headers:{'Authorization':'Bearer '+S.githubToken,'Accept':'application/vnd.github+json'}
-    });
-    const d=await r.json();
-    results.push(r.ok?`✓ GitHub: ${d.full_name}`:'✗ GitHub: '+r.status);
-  }catch(e){ results.push('✗ GitHub: '+e.message.slice(0,40)); }
-  setCfgStatus(results.join(' | '),'ok');
-}
-
-// ── GitHub API helpers ─────────────────────────────────────
-async function ghGet(path){
-  const r=await fetch(`https://api.github.com${path}`,{
-    headers:{'Authorization':'Bearer '+S.githubToken,'Accept':'application/vnd.github+json'}
-  });
-  return r.json();
-}
-
-async function ghPost(path,body){
-  const r=await fetch(`https://api.github.com${path}`,{
-    method:'POST',
-    headers:{'Authorization':'Bearer '+S.githubToken,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  });
-  return r.json();
-}
-
-async function ghPatch(path,body){
-  const r=await fetch(`https://api.github.com${path}`,{
-    method:'PATCH',
-    headers:{'Authorization':'Bearer '+S.githubToken,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  });
-  return r.json();
-}
-
-// ── Echte exec() met Claude + GitHub ──────────────────────
-async function exec(inp){
-  const t0=Date.now();
-  const tid=Math.random().toString(36).slice(2,10).toUpperCase();
-  const an=S.agent==='auto'?route(inp):S.agent;
-  const sh=an.replace('_agent','').toUpperCase();
-  const ag=S.agents.find(a=>a.name===an);
-  if(ag) ag.busy=true;
-
-  if(!S.claudeKey){
-    log('⚠ Geen Claude API key — ga naar KEYS tab','wn');
-    if(ag) ag.busy=false;
-    return;
-  }
-
-  log(`[${tid}][${S.prio}] → ${sh}: ${inp.slice(0,65)}...`,'ok');
-
-  // GitHub context ophalen als GitHub-token aanwezig
-  let githubContext='';
-  if(S.githubToken&&S.githubRepo){
-    try{
-      log(`[${tid}] ◈ GitHub context ophalen...`,'inf');
-      const [repoInfo,issues,commits]=await Promise.all([
-        ghGet(`/repos/${S.githubRepo}`),
-        ghGet(`/repos/${S.githubRepo}/issues?state=open&per_page=5`),
-        ghGet(`/repos/${S.githubRepo}/commits?per_page=3`)
-      ]);
-      githubContext=`\n\nGITHUB CONTEXT (${S.githubRepo}):
-- Repo: ${repoInfo.name} | Sterren: ${repoInfo.stargazers_count} | Branch: ${repoInfo.default_branch}
-- Beschrijving: ${repoInfo.description||'geen'}
-- Open issues (${repoInfo.open_issues_count}): ${Array.isArray(issues)?issues.slice(0,3).map(i=>`#${i.number} ${i.title}`).join(', '):'geen'}
-- Laatste commits: ${Array.isArray(commits)?commits.map(c=>`"${c.commit.message.slice(0,50)}"`).join(' | '):'geen'}`;
-      log(`[${tid}] ✓ GitHub data geladen`,'ok');
-    }catch(e){
-      log(`[${tid}] ⚠ GitHub: ${e.message.slice(0,50)}`,'wn');
-    }
-  }
-
-  // Agent-specifieke system prompt
-  const systemPrompts={
-    research_agent:`Je bent de Research Agent van Aetherion/Vectoris — een cyberpunk AI orchestrator. Analyseer grondig en geef heldere, gestructureerde inzichten. Wees bondig maar volledig. Reageer in het Nederlands.${githubContext}`,
-    code_agent:`Je bent de Code Agent van Aetherion/Vectoris. Schrijf productie-waardige, goed gedocumenteerde code. Geef altijd uitleg bij je code. Gebruik moderne best practices.${githubContext}`,
-    planner_agent:`Je bent de Planner Agent van Aetherion/Vectoris. Maak gedetailleerde, uitvoerbare plannen met duidelijke stappen, verantwoordelijken en tijdsindicaties.${githubContext}`,
-    executor_agent:`Je bent de Executor Agent van Aetherion/Vectoris. Voer acties uit en rapporteer resultaten. Als GitHub beschikbaar is, maak dan issues aan of update bestaande.${githubContext}`,
-    critic_agent:`Je bent de Critic Agent van Aetherion/Vectoris. Beoordeel kritisch op kwaliteit, veiligheid en ethiek. Geef altijd een score (1-10) en concrete verbeterpunten.${githubContext}`,
-    memory_agent:`Je bent de Memory Agent van Aetherion/Vectoris. Syntheseer informatie en maak verbanden. Gebruik de GitHub context als geheugen van het project.${githubContext}`,
-  };
-  const sysp=systemPrompts[an]||systemPrompts.research_agent;
-
-  // GitHub actie detecteren (executor agent)
-  let githubAction=null;
-  if(an==='executor_agent'&&S.githubToken&&S.githubRepo){
-    const tl=inp.toLowerCase();
-    if(/maak.*issue|create.*issue|nieuw.*issue|open.*issue/.test(tl)) githubAction='create_issue';
-    else if(/sluit.*issue|close.*issue/.test(tl)) githubAction='close_issue';
-    else if(/comment|reactie.*issue/.test(tl)) githubAction='comment_issue';
-  }
-
-  try{
-    // Claude API aanroepen
-    log(`[${tid}] 🤖 Claude denkt na...`,'inf');
-    const messages=[{role:'user',content:inp+(githubAction?`\n\n[GITHUB ACTIE GEVRAAGD: ${githubAction}. Geef je antwoord en eindig met JSON blok: {"github_action":"${githubAction}","title":"...","body":"...","issue_number":null}]`:'')}];
-
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'x-api-key':S.claudeKey,
-        'anthropic-version':'2023-06-01',
-        'content-type':'application/json',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:sysp,messages})
-    });
-
-    if(!r.ok){
-      const err=await r.json();
-      throw new Error(err.error?.message||r.status);
-    }
-
-    const data=await r.json();
-    const responseText=data.content.map(b=>b.text||'').join('');
-
-    // GitHub actie uitvoeren als gevraagd
-    if(githubAction&&S.githubToken){
-      try{
-        const jsonMatch=responseText.match(/\{[\s\S]*"github_action"[\s\S]*\}/);
-        if(jsonMatch){
-          const ga=JSON.parse(jsonMatch[0]);
-          if(ga.github_action==='create_issue'){
-            const issue=await ghPost(`/repos/${S.githubRepo}/issues`,{title:ga.title||inp.slice(0,70),body:ga.body||responseText.replace(jsonMatch[0],'').trim(),labels:['aetherion']});
-            log(`[${tid}] ◈ GitHub issue aangemaakt: #${issue.number} — ${issue.title}`,'ok');
-          } else if(ga.github_action==='comment_issue'&&ga.issue_number){
-            await ghPost(`/repos/${S.githubRepo}/issues/${ga.issue_number}/comments`,{body:ga.body||responseText});
-            log(`[${tid}] ◈ GitHub comment geplaatst op #${ga.issue_number}`,'ok');
-          }
-        }
-      }catch(e){ log(`[${tid}] ⚠ GitHub actie mislukt: ${e.message.slice(0,50)}`,'wn'); }
-    }
-
-    const dur=Date.now()-t0;
-    S.total++; S.ok++;
-    if(ag){ ag.busy=false; ag.tasks++; }
-    log(`[${tid}] ✓ ${sh} voltooid in ${dur}ms`,'ok');
-
-    // Response weergeven
-    const t=document.getElementById('terminal');
-    const c=document.createElement('div'); c.className='rcard'; c.setAttribute('data-a',sh);
-    c.innerHTML=`<div><span class="rk">CLAUDE [${sh}]: </span><span class="rv">${responseText.replace(/<[^>]*>/g,'').slice(0,600)}${responseText.length>600?'...':''}</span></div>`;
-    t.appendChild(c); t.scrollTop=t.scrollHeight;
-    upd();
-
-  }catch(e){
-    S.total++; S.blk++;
-    if(ag){ ag.busy=false; }
-    log(`[${tid}] ✗ Fout: ${e.message.slice(0,100)}`,'er');
-    upd();
-  }
-}
-
 // ── Init ───────────────────────────────────────────────────
-renderActions(); renderConnectors(); rQ(); upd(); loadConfig();
+// ── App opstarten ─────────────────────────────────────────
+// Alles initialiseren bij het laden van de pagina
+renderActions(); rQ(); upd(); loadConfig(); loadMemory();
 
+// Ctrl+Enter = snelkoppeling om direct te uitvoeren zonder knop
 document.getElementById('inp').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();run();}
 });
 
+// Opstart berichten die één voor één verschijnen in de terminal
 const boot=[
-  [100,'AETHERION/VECTORIS v2.0 INITIALISEREN...','dm'],
+  [100,'AETHERION/VECTORIS v3.0 INITIALISEREN...','dm'],
   [350,'Moreel kompas geladen — 9 ethische regels actief','ok'],
-  [600,'Orchestrator v2 gereed — 4 parallelle workers','ok'],
-  [850,'Claude API + GitHub MCP bridge geladen','inf'],
-  [1050,'Prioriteitswachtrij online — CRITICAL > HIGH > NORMAL > LOW','dm'],
-  [1250,'SQLite FTS5 geheugen geïnitialiseerd','dm'],
+  [600,'Orchestrator v3 gereed — 6 agents online','ok'],
+  [850,'Claude AI + GitHub MCP bridge verbonden','inf'],
+  [1050,'Sessie geheugen geïnitialiseerd','dm'],
+  [1250,'GitHub tab actief — real-time repo monitoring','inf'],
   [1500,'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','ok'],
-  [1600,()=>S.claudeKey?'✓ SYSTEEM GEREED. Claude + GitHub verbonden. Welkom, amigo!':'⚠ API keys niet geconfigureerd — ga naar KEYS tab','ok'],
+  [1600,()=>S.claudeKey?'✓ GEREED. Welkom terug amigo! QU1JR08= 🚀':'⚠ Configureer je API keys via de KEYS tab (⚙)','ok'],
   [1700,'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','ok'],
 ];
 boot.forEach(([t,m,c])=>setTimeout(()=>log(typeof m==='function'?m():m,c),t));

@@ -1,0 +1,17 @@
+{
+  "name": "aetherion-vectoris",
+  "version": "3.1.0",
+  "description": "Aetherion Vectoris — AI Orchestrator voor het leven",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Build klaar'",
+    "test": "echo 'Tests klaar'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0"
+  },
+  "author": "DhrKroon1337",
+  "license": "MIT"
+}
