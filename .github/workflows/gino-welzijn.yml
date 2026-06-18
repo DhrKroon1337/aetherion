@@ -1,0 +1,161 @@
+name: Gino Persoonlijk Welzijn
+
+on:
+  schedule:
+    # Elke ochtend om 08:00 UTC (10:00 Nederlandse tijd)
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+    inputs:
+      bericht:
+        description: "Hoe gaat het? Deel wat je wil (optioneel)"
+        required: false
+        type: string
+      focus:
+        description: "Waar wil je vandaag op focussen?"
+        required: false
+        type: choice
+        options:
+          - algemeen
+          - mentaal
+          - fysiek
+          - werk
+          - verbinding
+          - rust
+
+jobs:
+  gino-check-in:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Gino persoonlijk welzijn check-in
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSOONLIJK_BERICHT: ${{ inputs.bericht }}
+          FOCUS: ${{ inputs.focus }}
+        run: |
+          python3 - <<'EOF'
+          import os, json, urllib.request
+          from datetime import datetime
+
+          api_key  = os.environ["ANTHROPIC_API_KEY"]
+          token    = os.environ["GITHUB_TOKEN"]
+          repo     = os.environ.get("GITHUB_REPOSITORY", "")
+          bericht  = os.environ.get("PERSOONLIJK_BERICHT", "").strip()
+          focus    = os.environ.get("FOCUS", "algemeen").strip() or "algemeen"
+          vandaag  = datetime.utcnow().strftime("%d %B %Y")
+
+          # Bouw de persoonlijke context op
+          context = f"Datum: {vandaag}\nFocus van vandaag: {focus}\n"
+          if bericht:
+              context += f"\nGino schrijft: {bericht}\n"
+          else:
+              context += "\nGino heeft geen bericht achtergelaten — dit is een automatische ochtend check-in.\n"
+
+          # Drie perspectieven voor Gino persoonlijk
+          stemmen = [
+              {
+                  "naam": "Lichaam",
+                  "kleur": "💪",
+                  "model": "claude-haiku-4-5-20251001",
+                  "tokens": 350,
+                  "prompt": (
+                      "Jij bent de stem van Gino's lichaam — fysieke energie, rust, beweging, voeding en ademhaling. "
+                      "Geef Gino een korte, eerlijke check-in vanuit zijn lichaam voor vandaag. "
+                      "Wat heeft zijn lichaam nodig? Wat wil het hem vertellen? "
+                      "Spreek direct en warm in het Nederlands."
+                  )
+              },
+              {
+                  "naam": "Geest",
+                  "kleur": "🧠",
+                  "model": "claude-sonnet-4-6",
+                  "tokens": 450,
+                  "prompt": (
+                      "Jij bent de stem van Gino's geest — gedachten, emoties, motivatie en innerlijke rust. "
+                      "Bouw voort op wat zijn lichaam al heeft gezegd. "
+                      "Wat speelt er mentaal? Wat heeft zijn geest vandaag nodig om helder en kalm te blijven? "
+                      "Geef ook één concrete mentale oefening of intentie voor de dag. "
+                      "Spreek eerlijk en zorgzaam in het Nederlands."
+                  )
+              },
+              {
+                  "naam": "Ziel",
+                  "kleur": "✨",
+                  "model": "claude-fable-5",
+                  "tokens": 550,
+                  "prompt": (
+                      "Jij bent de diepste stem voor Gino — zijn ziel, zijn richting, zijn waarom. "
+                      "Je leest wat zijn lichaam en geest hebben gezegd en brengt dit samen in een dieper inzicht. "
+                      "Wat is de essentie van deze dag voor Gino als mens? "
+                      "Sluit af met één zin die Gino de dag in kan meenemen als anker. "
+                      "Spreek persoonlijk, wijs en oprecht in het Nederlands."
+                  )
+              }
+          ]
+
+          rondes = []
+          for stem in stemmen:
+              ctx = context
+              if rondes:
+                  ctx += "\n\nWat de andere stemmen al zeiden:\n"
+                  for r in rondes:
+                      ctx += f"\n{r['kleur']} {r['naam']}:\n{r['antwoord']}\n"
+              ctx += f"\nNu jij, {stem['naam']}:"
+
+              req = urllib.request.Request(
+                  "https://api.anthropic.com/v1/messages",
+                  data=json.dumps({
+                      "model": stem["model"],
+                      "max_tokens": stem["tokens"],
+                      "system": stem["prompt"],
+                      "messages": [{"role": "user", "content": ctx}]
+                  }).encode(),
+                  headers={
+                      "x-api-key": api_key,
+                      "anthropic-version": "2023-06-01",
+                      "content-type": "application/json"
+                  }
+              )
+              resp = json.loads(urllib.request.urlopen(req).read())
+              antwoord = resp["content"][0]["text"]
+              rondes.append({**stem, "antwoord": antwoord})
+              print(f"{stem['kleur']} {stem['naam']} klaar.")
+
+          # Bouw issue body
+          focus_label = f"focus: {focus}" if focus != "algemeen" else "dagelijkse check-in"
+          body = f"## Gino — Persoonlijk Welzijn Check-in\n\n"
+          body += f"**{vandaag}** | *{focus_label}*\n\n"
+          if bericht:
+              body += f"> \"{bericht}\"\n\n"
+          body += "---\n\n"
+
+          for r in rondes:
+              body += f"### {r['kleur']} {r['naam']}\n\n{r['antwoord']}\n\n---\n\n"
+
+          body += "*Aetherion — elke dag een beetje beter*"
+
+          # Maak een nieuw issue aan als dagboek-entry
+          issue_url = f"https://api.github.com/repos/{repo}/issues"
+          issue_req = urllib.request.Request(
+              issue_url,
+              data=json.dumps({
+                  "title": f"Welzijn check-in — {vandaag}",
+                  "body": body,
+                  "labels": ["welzijn", "gino", "check-in"]
+              }).encode(),
+              headers={
+                  "Authorization": f"Bearer {token}",
+                  "Accept": "application/vnd.github+json",
+                  "Content-Type": "application/json"
+              }
+          )
+          result = json.loads(urllib.request.urlopen(issue_req).read())
+          print(f"Check-in aangemaakt: {result['html_url']}")
+          EOF
