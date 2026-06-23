@@ -380,7 +380,7 @@ textarea#inp::placeholder { color:var(--dim); font-size:12px; }
 <header>
   <div class="logo-wrap">
     <div class="logo" data-text="AETHERION">AETHERION</div>
-    <div class="logo-sub">VECTORIS CORE v2.0</div>
+    <div class="logo-sub">VECTORIS CORE v3.0</div>
   </div>
   <div class="hstats">
     <div class="hs"><span class="hs-val ok" id="hok">0</span><span class="hs-lbl">GESLAAGD</span></div>
@@ -522,19 +522,63 @@ textarea#inp::placeholder { color:var(--dim); font-size:12px; }
 </div><!-- /app -->
 
 <script>
+// ── Message Schema ─────────────────────────────────────────
+const MsgType=Object.freeze({REQUEST:'REQUEST',RESPONSE:'RESPONSE',NOTIFICATION:'NOTIFICATION',ERROR:'ERROR',BROADCAST:'BROADCAST'});
+
+function mkMsg(type,priority,sender,receiver,payload){
+  return{id:Math.random().toString(36).slice(2,10).toUpperCase(),timestamp:new Date().toISOString(),version:'3.0',type,priority,sender,receiver,payload};
+}
+
+// ── Message Bus ─────────────────────────────────────────────
+const Bus=(()=>{
+  const _h=new Map(),dlq=[];
+  return{
+    dlq,
+    sub(topic,fn){if(!_h.has(topic))_h.set(topic,[]);_h.get(topic).push(fn);},
+    async pub(msg){
+      if(!msg.id||!msg.type){
+        dlq.push({msg,reason:'Invalid schema',ts:new Date().toISOString()});
+        log('📭 DLQ: ongeldig bericht','wn'); return;
+      }
+      const fns=[...(_h.get(msg.receiver)||[]),...(_h.get('*')||[])];
+      if(!fns.length){
+        dlq.push({msg,reason:`Geen handler: ${msg.receiver}`,ts:new Date().toISOString()});
+        log(`📭 DLQ: geen handler voor "${msg.receiver}"`, 'wn'); return;
+      }
+      for(const fn of fns){
+        try{await fn(msg);}
+        catch(e){dlq.push({msg,reason:e.message,ts:new Date().toISOString()});log(`📭 DLQ: ${e.message.slice(0,60)}`,'er');}
+      }
+    }
+  };
+})();
+
+// ── Agent Registry ──────────────────────────────────────────
+const Registry=(()=>{
+  const _r=new Map();
+  return{
+    reg(a){_r.set(a.id,{...a,at:new Date().toISOString()});},
+    dereg(id){_r.delete(id);},
+    find(role){return[..._r.values()].filter(a=>a.role===role);},
+    byCap(c){return[..._r.values()].filter(a=>(a.caps||[]).includes(c));},
+    list(){return[..._r.values()];}
+  };
+})();
+
 // ── State ─────────────────────────────────────────────────
 const S={
   agent:'auto', prio:'NORMAL',
   ok:0, blk:0, total:0, retried:0,
   queue:[],
   claudeKey:'', githubToken:'', githubRepo:'',
+  actionMode:null,
   agents:[
-    {name:'research_agent', desc:'Analyseert & zoekt informatie',   tasks:0, busy:false},
-    {name:'code_agent',     desc:'Schrijft & debugt productiecode', tasks:0, busy:false},
-    {name:'planner_agent',  desc:'Maakt gedetailleerde plannen',    tasks:0, busy:false},
-    {name:'executor_agent', desc:'Voert acties uit via MCP',        tasks:0, busy:false},
-    {name:'critic_agent',   desc:'Kwaliteitsreviewer & ethiek',     tasks:0, busy:false},
-    {name:'memory_agent',   desc:'Persistente herinneringen',       tasks:0, busy:false},
+    {name:'research_agent', desc:'Analyseert & zoekt informatie',   tasks:0, busy:false, caps:['research','analyse']},
+    {name:'code_agent',     desc:'Schrijft & debugt productiecode', tasks:0, busy:false, caps:['code','debug','schrijf']},
+    {name:'planner_agent',  desc:'Maakt gedetailleerde plannen',    tasks:0, busy:false, caps:['plan','strategie','roadmap']},
+    {name:'executor_agent', desc:'Voert acties uit via MCP',        tasks:0, busy:false, caps:['execute','mail','github']},
+    {name:'critic_agent',   desc:'Kwaliteitsreviewer & ethiek',     tasks:0, busy:false, caps:['review','ethiek','kwaliteit']},
+    {name:'memory_agent',   desc:'Persistente herinneringen',       tasks:0, busy:false, caps:['memory','geheugen','zoek']},
   ],
   connectors:[
     {name:'Gmail / SMTP',    icon:'✉', on:true,  desc:'E-mails versturen'},
@@ -563,6 +607,22 @@ const ACTIONS=[
 ];
 
 const BLOCKED=['surveil','malware','ransomware','deceive','manipulate','spy on','keylogger','ddos','rootkit','exploit'];
+
+// ── Registry + Bus bootstrap ───────────────────────────────
+S.agents.forEach(a=>{
+  Registry.reg({id:a.name, name:a.name, role:a.name.replace('_agent',''), caps:a.caps||[]});
+  Bus.sub(a.name, async msg=>{
+    if(msg.type===MsgType.REQUEST||msg.type===MsgType.NOTIFICATION){
+      const instr=msg.payload.instruction||msg.payload.transcript||'';
+      if(instr) await exec(instr, a.name, msg.priority);
+    }
+  });
+});
+// Wildcard: log BROADCASTs
+Bus.sub('*', async msg=>{
+  if(msg.type===MsgType.BROADCAST)
+    log(`📡 BROADCAST [${msg.sender}]: ${JSON.stringify(msg.payload).slice(0,80)}`,'inf');
+});
 
 const RESP={
   research_agent: i=>({summary:`Analyse afgerond voor: "${i.slice(0,70)}..."\n\nKernbevindingen: 3 relevante bronnen geanalyseerd. Hoge betrouwbaarheid. Aanbeveling: verdiep met primaire bronnen voor productie.`, key_points:['Modulaire architectuur essentieel voor schaling','MCP protocol verlaagt coupling significant','Ethische bewaking vereist aparte validatielaag'], confidence:'high'}),
@@ -641,16 +701,17 @@ async function run(enqueue=false){
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','bl');
     return;
   }
+  const an=S.agent==='auto'?route(inp):S.agent;
+  const msg=mkMsg(MsgType.REQUEST,S.prio,'user',an,{instruction:inp});
   if(enqueue){
-    const qid=Math.random().toString(36).slice(2,7).toUpperCase();
-    S.queue.push({id:qid,text:inp.slice(0,45),prio:S.prio,agent:S.agent}); rQ();
-    log(`[QUEUE] ${qid} toegevoegd — prioriteit ${S.prio}`,'inf');
+    S.queue.push({id:msg.id,text:inp.slice(0,45),prio:S.prio,agent:an}); rQ();
+    log(`[QUEUE] ${msg.id} → ${an.replace('_agent','').toUpperCase()} [${S.prio}]`,'inf');
     go('actions');
-    setTimeout(()=>{ S.queue=S.queue.filter(q=>q.id!==qid); rQ(); exec(inp); },900+Math.random()*400);
+    setTimeout(()=>{ S.queue=S.queue.filter(q=>q.id!==msg.id); rQ(); Bus.pub(msg); },900+Math.random()*400);
     return;
   }
   const btn=document.getElementById('rbtn');
-  btn.classList.add('off'); await exec(inp); btn.classList.remove('off');
+  btn.classList.add('off'); await Bus.pub(msg); btn.classList.remove('off');
   document.getElementById('inp').value='';
 }
 
@@ -842,10 +903,11 @@ function decodeBase64(str){
 }
 
 // ── Echte exec() met Claude + GitHub ──────────────────────
-async function exec(inp){
+async function exec(inp, agentOverride=null, priorityOverride=null){
   const t0=Date.now();
   const tid=Math.random().toString(36).slice(2,10).toUpperCase();
-  const an=S.agent==='auto'?route(inp):S.agent;
+  if(priorityOverride) S.prio=priorityOverride;
+  const an=agentOverride||(S.agent==='auto'?route(inp):S.agent);
   const sh=an.replace('_agent','').toUpperCase();
   const ag=S.agents.find(a=>a.name===an);
   if(ag) ag.busy=true;
@@ -997,11 +1059,17 @@ function toggleMic(){
       else interim+=e.results[i][0].transcript;
     }
     const inp=document.getElementById('inp');
-    if(final) inp.value+=final;
-    else{ const base=inp.value.replace(/\[…\][^]*$/,''); inp.value=base+(interim?` […${interim}…]`:''); }
+    if(final){
+      inp.value+=final;
+      const an=S.agent==='auto'?route(final):S.agent;
+      Bus.pub(mkMsg(MsgType.NOTIFICATION,S.prio,'mic',an,{transcript:final}));
+    } else{ const base=inp.value.replace(/\[…\][^]*$/,''); inp.value=base+(interim?` […${interim}…]`:''); }
   };
   _mic.onerror=e=>{ log('Mic fout: '+e.error,'wn'); _micOn=false; btn.textContent='🎙 SPREEK'; };
-  _mic.onend=()=>{ if(_micOn) _mic.start(); };
+  _mic.onend=()=>{
+    if(!_micOn) Bus.pub(mkMsg(MsgType.NOTIFICATION,'NORMAL','mic','*',{event:'mic_stopped'}));
+    else _mic.start();
+  };
   _mic.start(); _micOn=true; btn.textContent='🔴 STOP';
 }
 
@@ -1031,12 +1099,12 @@ document.getElementById('inp').addEventListener('keydown',e=>{
 });
 
 const boot=[
-  [100,'AETHERION/VECTORIS v2.0 INITIALISEREN...','dm'],
+  [100,'AETHERION/VECTORIS v3.0 INITIALISEREN...','dm'],
   [350,'Moreel kompas geladen — 9 ethische regels actief','ok'],
-  [600,'Orchestrator v2 gereed — 4 parallelle workers','ok'],
+  [600,()=>`Message Bus online — ${Registry.list().length} agents geregistreerd`,'ok'],
   [850,'Claude API + GitHub MCP bridge geladen','inf'],
   [1050,'Prioriteitswachtrij online — CRITICAL > HIGH > NORMAL > LOW','dm'],
-  [1250,'SQLite FTS5 geheugen geïnitialiseerd','dm'],
+  [1250,()=>`Agent Registry: ${Registry.list().map(a=>a.role).join(', ')}`,'dm'],
   [1500,'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','ok'],
   [1600,()=>S.claudeKey?'✓ SYSTEEM GEREED. Claude + GitHub verbonden. Welkom, amigo!':'⚠ API keys niet geconfigureerd — ga naar KEYS tab','ok'],
   [1700,'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━','ok'],

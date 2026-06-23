@@ -1,0 +1,56 @@
+
+<style>
+  .sheet { padding: 1.5rem 0; font-family: var(--font-mono); }
+  .section { margin-bottom: 1.5rem; }
+  .section-title { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; padding-left: 0.75rem; border-left: 2px solid var(--color-border-secondary); }
+  .row { display: flex; align-items: baseline; gap: 1rem; padding: 0.3rem 0; border-bottom: 1px solid var(--color-border-tertiary); }
+  .row:last-child { border-bottom: none; }
+  .cmd { color: var(--color-text-info); font-size: 13px; min-width: 280px; flex-shrink: 0; }
+  .desc { color: var(--color-text-secondary); font-size: 12px; font-family: var(--font-sans); }
+  .arrow { color: var(--color-text-tertiary); font-size: 12px; flex-shrink: 0; }
+</style>
+<div class="sheet">
+  <div class="section">
+    <div class="section-title">Git bash</div>
+    <div class="row"><span class="cmd">mkdir todo-app</span><span class="arrow">→</span><span class="desc">maak nieuwe map aan</span></div>
+    <div class="row"><span class="cmd">cd todo-app</span><span class="arrow">→</span><span class="desc">navigeer de map in</span></div>
+    <div class="row"><span class="cmd">git init</span><span class="arrow">→</span><span class="desc">start een git repository</span></div>
+    <div class="row"><span class="cmd">touch main.py</span><span class="arrow">→</span><span class="desc">maak leeg bestand aan</span></div>
+    <div class="row"><span class="cmd">git status</span><span class="arrow">→</span><span class="desc">bekijk gewijzigde bestanden</span></div>
+    <div class="row"><span class="cmd">git add .</span><span class="arrow">→</span><span class="desc">alle wijzigingen klaarzetten</span></div>
+    <div class="row"><span class="cmd">git commit -m "bericht"</span><span class="arrow">→</span><span class="desc">snapshot opslaan</span></div>
+    <div class="row"><span class="cmd">git log --oneline</span><span class="arrow">→</span><span class="desc">commit geschiedenis compact</span></div>
+    <div class="row"><span class="cmd">git diff</span><span class="arrow">→</span><span class="desc">wat is er precies veranderd</span></div>
+    <div class="row"><span class="cmd">echo ".env" >> .gitignore</span><span class="arrow">→</span><span class="desc">toevoegen aan gitignore</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">PowerShell</div>
+    <div class="row"><span class="cmd">Get-Process</span><span class="arrow">→</span><span class="desc">alle actieve processen</span></div>
+    <div class="row"><span class="cmd">Get-Process -Id 12928</span><span class="arrow">→</span><span class="desc">specifiek process op PID</span></div>
+    <div class="row"><span class="cmd">Stop-Process -Id 1234 -Force</span><span class="arrow">→</span><span class="desc">process hard stoppen</span></div>
+    <div class="row"><span class="cmd">Get-ChildItem C:\map\</span><span class="arrow">→</span><span class="desc">bestanden in map tonen</span></div>
+    <div class="row"><span class="cmd">Get-Content bestand.txt -Wait</span><span class="arrow">→</span><span class="desc">live log volgen</span></div>
+    <div class="row"><span class="cmd">netstat -ano</span><span class="arrow">→</span><span class="desc">actieve netwerkverbindingen</span></div>
+    <div class="row"><span class="cmd">nslookup 193.30.23.89</span><span class="arrow">→</span><span class="desc">IP naar domeinnaam omzetten</span></div>
+    <div class="row"><span class="cmd">net localgroup Administrators</span><span class="arrow">→</span><span class="desc">wie heeft admin rechten</span></div>
+    <div class="row"><span class="cmd">Get-ScheduledTask</span><span class="arrow">→</span><span class="desc">geplande taken bekijken</span></div>
+    <div class="row"><span class="cmd">$env:APPDATA</span><span class="arrow">→</span><span class="desc">AppData pad openen</span></div>
+    <div class="row"><span class="cmd">code .</span><span class="arrow">→</span><span class="desc">VS Code openen in huidige map</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Python</div>
+    <div class="row"><span class="cmd">import json / os</span><span class="arrow">→</span><span class="desc">modules inladen</span></div>
+    <div class="row"><span class="cmd">os.path.exists(bestand)</span><span class="arrow">→</span><span class="desc">bestaat dit bestand?</span></div>
+    <div class="row"><span class="cmd">open(bestand, "r")</span><span class="arrow">→</span><span class="desc">bestand lezen</span></div>
+    <div class="row"><span class="cmd">open(bestand, "w")</span><span class="arrow">→</span><span class="desc">bestand schrijven/overschrijven</span></div>
+    <div class="row"><span class="cmd">json.load(f)</span><span class="arrow">→</span><span class="desc">JSON naar Python object</span></div>
+    <div class="row"><span class="cmd">json.dump(data, f, indent=2)</span><span class="arrow">→</span><span class="desc">Python object naar JSON</span></div>
+    <div class="row"><span class="cmd">lijst.append(item)</span><span class="arrow">→</span><span class="desc">item toevoegen aan lijst</span></div>
+    <div class="row"><span class="cmd">lijst.pop(index)</span><span class="arrow">→</span><span class="desc">item verwijderen op positie</span></div>
+    <div class="row"><span class="cmd">f"tekst {variabele}"</span><span class="arrow">→</span><span class="desc">variabele in tekst zetten</span></div>
+    <div class="row"><span class="cmd">python main.py</span><span class="arrow">→</span><span class="desc">script uitvoeren</span></div>
+    <div class="row"><span class="cmd">load_dotenv()</span><span class="arrow">→</span><span class="desc">.env bestand inladen</span></div>
+  </div>
+</div>
