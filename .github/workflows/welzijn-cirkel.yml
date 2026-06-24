@@ -1,0 +1,81 @@
+name: Welzijn Cirkel
+
+on:
+  issues:
+    types: [opened, reopened]
+    # Trigger alleen als label 'welzijn' aanwezig is
+  workflow_dispatch:
+    inputs:
+      vraag:
+        description: "Vraag of situatie voor de Welzijn Cirkel"
+        required: true
+        type: string
+
+jobs:
+  cirkel:
+    runs-on: ubuntu-latest
+    # Alleen uitvoeren als issue het label 'welzijn' heeft, of via handmatige trigger
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.issue.labels.*.name, 'welzijn')
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Start Welzijn Cirkel
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          HANDMATIGE_VRAAG: ${{ inputs.vraag }}
+        run: |
+          python3 - <<'EOF'
+          import os, sys, json, urllib.request
+          sys.path.insert(0, "scripts")
+          from welzijn_cirkel import start_cirkel, formatteer_voor_github
+
+          api_key = os.environ["ANTHROPIC_API_KEY"]
+          token   = os.environ["GITHUB_TOKEN"]
+          repo    = os.environ.get("GITHUB_REPOSITORY", "")
+
+          handmatig = os.environ.get("HANDMATIGE_VRAAG", "").strip()
+          issue_title = os.environ.get("ISSUE_TITLE", "").strip()
+          issue_body  = os.environ.get("ISSUE_BODY", "").strip()
+          issue_number = os.environ.get("ISSUE_NUMBER", "").strip()
+
+          if handmatig:
+              vraag = handmatig
+          elif issue_title:
+              vraag = issue_title
+              if issue_body:
+                  vraag += f"\n\n{issue_body}"
+          else:
+              print("Geen vraag gevonden.")
+              sys.exit(1)
+
+          print(f"Cirkel start voor: {vraag[:80]}...")
+          rondes = start_cirkel(vraag, api_key, stil=True)
+          bericht = formatteer_voor_github(vraag, rondes)
+
+          if issue_number:
+              url = f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments"
+              req = urllib.request.Request(
+                  url,
+                  data=json.dumps({"body": bericht}).encode(),
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "Content-Type": "application/json"
+                  }
+              )
+              urllib.request.urlopen(req)
+              print(f"Cirkel voltooid — gepost op issue #{issue_number}")
+          else:
+              print("\n" + bericht)
+          EOF

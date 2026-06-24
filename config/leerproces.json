@@ -1,0 +1,32 @@
+{
+  "versie": "1.0.0",
+  "actief_profiel": "basis",
+  "leerprofielen": {
+    "basis": {
+      "model_id": "claude-haiku-4-5-20251001",
+      "niveau": 1,
+      "beschrijving": "Instapniveau — eenvoudige uitleg, korte antwoorden",
+      "max_tokens": 300,
+      "systeem_prompt": "Je bent een geduldige leercoach. Leg alles simpel uit alsof de leerling het voor het eerst hoort. Gebruik voorbeelden uit het dagelijks leven."
+    },
+    "gemiddeld": {
+      "model_id": "claude-sonnet-4-6",
+      "niveau": 2,
+      "beschrijving": "Gevorderd — diepere uitleg, meer context",
+      "max_tokens": 700,
+      "systeem_prompt": "Je bent een ervaren docent. Geef gestructureerde uitleg met stap-voor-stap redenering. Stel controlevragen om begrip te toetsen."
+    },
+    "expert": {
+      "model_id": "claude-fable-5",
+      "niveau": 3,
+      "beschrijving": "Expert — volledige diepgang, kritisch denken",
+      "max_tokens": 1500,
+      "systeem_prompt": "Je bent een expert-mentor. Daag de leerling uit met complexe vraagstukken, nuance en kritisch denken. Verwijs naar onderliggende principes en verbanden."
+    }
+  },
+  "voortgang": {
+    "voltooide_lessen": [],
+    "huidig_niveau": 1,
+    "punten": 0
+  }
+}
