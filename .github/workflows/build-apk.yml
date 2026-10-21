@@ -38,6 +38,9 @@ jobs:
       # ── 4. Android SDK instellen ───────────────────────────────────
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Het oude pakket 'tools' bestaat niet meer in nieuwe SDK-versies
+          packages: 'platform-tools'
 
       # ── 5. Dependencies installeren ────────────────────────────────
       - name: Install Node dependencies
