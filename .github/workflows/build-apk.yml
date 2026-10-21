@@ -105,7 +105,7 @@ jobs:
             ## Aetherion/Vectoris Android App
 
             ### Installeren
-            1. Download `aetherion-debug.apk` hieronder
+            1. Download `app-debug.apk` hieronder
             2. Stuur naar je Android telefoon (mail/WhatsApp)
             3. Instellingen → Beveiliging → Onbekende bronnen: AAN
             4. Tik op de APK → Installeren
@@ -113,7 +113,7 @@ jobs:
             ### Wat is er nieuw
             - Matrix UI met volledige Orchestrator interface
             - 6 agents: Research, Code, Planner, Executor, Critic, Memory
-            - Moreel kompas met 9 ethische regels
+            - Moreel kompas met blokkeerlijst
             - MCP app connectors
             - Prioriteitswachtrij (CRITICAL > HIGH > NORMAL > LOW)
           files: android/app/build/outputs/apk/debug/app-debug.apk
