@@ -59,8 +59,9 @@ def test_claude_direct():
         }
         
         data = {
-            "model": "claude-sonnet-4-5",
-            "max_tokens": 150,
+            "model": "claude-sonnet-5-5",
+            "output_config": {"effort": "low"},
+            "max_tokens": 1024,
             "messages": [
                 {
                     "role": "user",
@@ -80,7 +81,7 @@ def test_claude_direct():
             return False
         
         result = response.json()
-        message = result['content'][0]['text']
+        message = ''.join(b.get('text', '') for b in result['content'] if b.get('type') == 'text')
         print(f"✅ Claude connected!")
         print(f"✅ Claude says: {message}")
         return True
@@ -122,8 +123,9 @@ def test_communication():
 - Issues: {repo_data['open_issues_count']}"""
         
         data = {
-            "model": "claude-sonnet-4-5",
-            "max_tokens": 100,
+            "model": "claude-sonnet-5-5",
+            "output_config": {"effort": "low"},
+            "max_tokens": 1024,
             "messages": [{"role": "user", "content": prompt}]
         }
         
@@ -138,7 +140,7 @@ def test_communication():
             return False
         
         result = response.json()
-        assessment = result['content'][0]['text']
+        assessment = ''.join(b.get('text', '') for b in result['content'] if b.get('type') == 'text')
         print(f"✅ GitHub → Claude → Response:")
         print(f"   {assessment}")
         return True
