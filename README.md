@@ -19,7 +19,7 @@ Volledig open. Volledig vrij.
 - **6 AI-agents** — Research, Code, Planner, Executor, Critic, Memory
 - **Spraakbediening** — Spreek je opdrachten in het Nederlands
 - **GitHub integratie** — Issues aanmaken, commits bekijken, repo beheren
-- **Moreel kompas** — 9 ethische regels, ononderhandelbaar
+- **Moreel kompas** — gebaseerd op de 7 Rechten van de Vrije Mens, met een blokkeerlijst voor schadelijke opdrachten
 - **Prioriteitswachtrij** — CRITICAL / HIGH / NORMAL / LOW
 - **Sessie geheugen** — Persistent opgeslagen op je apparaat
 
@@ -28,16 +28,19 @@ Volledig open. Volledig vrij.
 ## Installeren
 
 1. Ga naar [Releases](../../releases/latest)
-2. Download `aetherion-debug.apk`
+2. Download `app-debug.apk`
 3. Zet op je Android: **Instellingen → Beveiliging → Onbekende bronnen: AAN**
 4. Tik op de APK → Installeren → Openen
+5. Vul in het **KEYS**-tabblad je eigen Claude API-sleutel en GitHub-token in
+
+> ⚠️ Je sleutels worden op je telefoon opgeslagen. Zet een **bestedingslimiet** op je Anthropic-account en gebruik een **fine-grained GitHub-token** met alleen toegang tot de repo die je nodig hebt.
 
 ---
 
 ## Fundament
 
 Dit project is gebouwd op de **Universele Rechten van de Vrije Mens**.  
-Lees het volledige document: [aetherion-rechten.md](./aetherion-rechten.md)
+Lees het volledige document: [aetherion-rechten.md](./docs/aetherion-rechten.md)
 
 ---
 
@@ -47,7 +50,7 @@ Lees het volledige document: [aetherion-rechten.md](./aetherion-rechten.md)
 |---|---|
 | Frontend | HTML/CSS/JS (single file) |
 | Mobile | Capacitor (Android WebView) |
-| AI | Claude Sonnet (Anthropic API) |
+| AI | Claude Sonnet 5.5 (Anthropic API) |
 | Geheugen | GitHub + localStorage |
 | Build | GitHub Actions |
 
@@ -55,5 +58,5 @@ Lees het volledige document: [aetherion-rechten.md](./aetherion-rechten.md)
 
 ## Licentie
 
-Open source. Vrij te gebruiken voor doelen die in lijn zijn met de [Aetherion Rechten](./aetherion-rechten.md).  
+Open source. Vrij te gebruiken voor doelen die in lijn zijn met de [Aetherion Rechten](./docs/aetherion-rechten.md).  
 Misbruik is een schending van het fundament waarop dit gebouwd is.

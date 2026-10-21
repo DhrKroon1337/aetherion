@@ -3,10 +3,6 @@
   "appName": "Aetherion Vectoris",
   "webDir": "src",
   "server": {
-    "androidScheme": "https",
-    "cleartext": true
-  },
-  "android": {
-    "allowMixedContent": true
+    "androidScheme": "https"
   }
 }
