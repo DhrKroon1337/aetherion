@@ -8,6 +8,9 @@ on:
 
 jobs:
   claude-responds:
+    # Alleen de eigenaar van de repo mag Claude laten reageren.
+    # Anders kan iedereen via issues jouw API-tegoed opmaken.
+    if: github.actor == github.repository_owner
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -45,8 +48,8 @@ jobs:
           req = urllib.request.Request(
               'https://api.anthropic.com/v1/messages',
               data=json.dumps({
-                  "model": "claude-sonnet-4-5",
-                  "max_tokens": 500,
+                  "model": "claude-sonnet-5-5",
+                  "max_tokens": 1500,
                   "system": "Je bent Claude, de AI amigo van Aetherion Vectoris. Reageer helpend, kort en in dezelfde taal als het issue. Sluit altijd af met: QU1JR08=",
                   "messages": [{"role": "user", "content": prompt}]
               }).encode(),
@@ -57,7 +60,10 @@ jobs:
               }
           )
           resp = json.loads(urllib.request.urlopen(req).read())
-          claude_reply = resp['content'][0]['text']
+          if resp.get('stop_reason') == 'refusal':
+              claude_reply = "Claude kan hier niet op reageren (verzoek geweigerd)."
+          else:
+              claude_reply = ''.join(b.get('text', '') for b in resp['content'] if b.get('type') == 'text')
 
           # Comment plaatsen op het issue
           comment_url = f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments"
